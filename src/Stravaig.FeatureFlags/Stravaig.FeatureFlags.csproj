@@ -1,0 +1,57 @@
+<!--EXTERNAL_PROPERTIES: GITHUB_SHA-->
+<!--EXTERNAL_PROPERTIES: GITHUB_SERVER_URL-->
+<!--EXTERNAL_PROPERTIES: GITHUB_REPOSITORY-->
+<!--EXTERNAL_PROPERTIES: GITHUB_RUN_ID-->
+<!--EXTERNAL_PROPERTIES: STRAVAIG_RELEASE_TAG-->
+<!--EXTERNAL_PROPERTIES: GITHUB_ACTIONS-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
+	  <IsPackable>true</IsPackable>
+	  <GenerateDocumentationFile>false</GenerateDocumentationFile>
+	  <StravaigBuildTime>$([System.DateTime]::Now.ToString("dddd, d MMMM yyyy 'at' HH:mm:ss zzzz"))</StravaigBuildTime>
+	  <StravaigCopyrightYear>$([System.DateTime]::Now.ToString("yyyy"))</StravaigCopyrightYear>
+	  <StravaigGitHubCommit>$(GITHUB_SHA)</StravaigGitHubCommit>
+	  <StravaigWorkflowUrl>$(GITHUB_SERVER_URL)/$(GITHUB_REPOSITORY)/actions/runs/$(GITHUB_RUN_ID)</StravaigWorkflowUrl>
+	  <StravaigReleaseNotes>https://github.com/$(GITHUB_REPOSITORY)/releases/tag/$(STRAVAIG_RELEASE_TAG)</StravaigReleaseNotes>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<Title>Stravaig Strongly Typed Feature Flags</Title>
+		<Authors>Colin Angus Mackay</Authors>
+		<Copyright>©$(StravaigCopyrightYear) Stravaig Projects. See licence for more information.</Copyright>
+		<PackageProjectUrl>https://github.com/$(GITHUB_REPOSITORY)/blob/$(StravaigGitHubCommit)/README.md</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/$(GITHUB_REPOSITORY)</RepositoryUrl>
+		<PackageIcon>stravaig-icon.png</PackageIcon>
+		<PackageTags>Configuration SqlServer</PackageTags>
+		<Description>
+      Strongly typed feature flags are based on the example of using a feature
+      flag from Mark Seemans' book "Code that Fits in your Head", but wrapping
+      the IFeatureManagement interface in strongly typed classes.
+
+			Built on $(StravaigBuildTime).
+			Build run details at: $(StravaigWorkflowUrl)
+			Release notes at: $(StravaigReleaseNotes)
+		</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="stravaig-icon.png" Pack="true" PackagePath="/" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+	</ItemGroup>
+</Project>

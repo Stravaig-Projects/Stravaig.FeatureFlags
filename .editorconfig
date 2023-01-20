@@ -1,0 +1,10 @@
+# Docs: https://EditorConfig.org
+# Plug in for Visual Studio Code: https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig
+
+# top-most EditorConfig file
+root = true
+
+# General settings for the repo
+trim_trailing_whitespace=true # Remove whitespace at the end of lines
+charset: utf-8
+insert_final_newline=true

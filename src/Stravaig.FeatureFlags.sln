@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__BuildAndDeploy", "__BuildAndDeploy", "{3D36916B-2367-4624-BDCF-864173796B30}"
 	ProjectSection(SolutionItems) = preProject
@@ -22,7 +22,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__Documentation", "__Docume
 		..\release-notes\wip-release-notes.md = ..\release-notes\wip-release-notes.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stravaig.FeatureFlags", "Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj", "{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stravaig.FeatureFlags.Tests", "Stravaig.FeatureFlags.Tests\Stravaig.FeatureFlags.Tests.csproj", "{954D49CA-E8C5-4237-84AE-2B413108FF63}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
