@@ -1,0 +1,56 @@
+#!/usr/bin/env pwsh
+
+param
+(
+    [string]
+    $messageFile
+) 
+
+Write-Output "Message file = $messageFile"
+
+$ErrorActionPreference = "Stop"
+$excludedBranches = @("master", "dev", "development", "main", "HEAD");
+
+$modulePath = "./.stravaig/gitHooks/common.psm1"
+Import-Module $modulePath
+
+$branchName = Invoke-Process git "rev-parse --abbrev-ref HEAD"
+
+# Exit now if branches shouldn't have a ticket number attached.
+if (($excludedBranches -contains $branchName) -or ($branchName.StartsWith("dependabot")))
+{
+    Write-Output "This is a special branch, `"$branchName`", and does not need a ticket number."
+    Exit 0;
+}
+
+$branchTicketMatch = $branchName -match "(^\#\d+)";
+if (-not $branchTicketMatch)
+{
+    Write-Output "ERROR: Ticket ID not found in branch name (`"$branchName`").";
+    Exit 1;
+} 
+else 
+{
+    $ticketId = $Matches[0];
+
+    Write-Output "Ticket is $ticketId"
+
+    $contents = Get-Content $messageFile -Raw;
+    $contents = $contents.Split("`n");
+
+    $messageTitle = $contents[0];
+    if (-not ($messageTitle.StartsWith($ticketId)))
+    {
+        $newMessageTitle = "($ticketId) $messageTitle";
+        $contents[0] = $newMessageTitle
+        
+        Write-Output "Commit message was: $messageTitle";
+        Write-Output "Commit message is now: $newMessageTitle";
+    }
+
+    $content = [string]::Join("`n", $contents)
+    Set-Content $messageFile -Value $content -Encoding utf8 -NoNewLine
+}
+
+# Must be explicit and set the exit code otherwise git thinks the operation failed.
+exit 0;
