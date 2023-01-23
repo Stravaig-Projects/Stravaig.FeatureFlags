@@ -9,10 +9,13 @@ public class SimpleTest : VerifySourceGeneratorTests
         string source = @"
 using Stravaig.FeatureFlags;
 
+namespace MyTestNamespace;
+
 [StronglyTypedFeatureFlags]
 public enum FeatureFlags
 {
-    MyFirstFeature,
+    FeatureOne,
+    FeatureTwo,
 }
 ";
 

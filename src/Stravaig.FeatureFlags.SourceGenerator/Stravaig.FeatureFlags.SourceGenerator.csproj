@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj" />
+  </ItemGroup>
+
 </Project>
