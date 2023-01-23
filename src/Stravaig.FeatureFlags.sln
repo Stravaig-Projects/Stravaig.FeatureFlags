@@ -22,9 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__Documentation", "__Docume
 		..\release-notes\wip-release-notes.md = ..\release-notes\wip-release-notes.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stravaig.FeatureFlags", "Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj", "{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stravaig.FeatureFlags", "Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj", "{B6CD0B88-B0D7-4E91-B518-AB570DF27E90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stravaig.FeatureFlags.Tests", "Stravaig.FeatureFlags.Tests\Stravaig.FeatureFlags.Tests.csproj", "{954D49CA-E8C5-4237-84AE-2B413108FF63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stravaig.FeatureFlags.Tests", "Stravaig.FeatureFlags.Tests\Stravaig.FeatureFlags.Tests.csproj", "{954D49CA-E8C5-4237-84AE-2B413108FF63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stravaig.FeatureFlags.SourceGenerator", "Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj", "{4F893F30-4E9B-4DCC-A175-D8B1CF22F4A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +42,10 @@ Global
 		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{954D49CA-E8C5-4237-84AE-2B413108FF63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F893F30-4E9B-4DCC-A175-D8B1CF22F4A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F893F30-4E9B-4DCC-A175-D8B1CF22F4A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F893F30-4E9B-4DCC-A175-D8B1CF22F4A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F893F30-4E9B-4DCC-A175-D8B1CF22F4A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
