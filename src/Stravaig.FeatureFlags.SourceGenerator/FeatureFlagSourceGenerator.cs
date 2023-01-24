@@ -62,7 +62,6 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
 
     private static bool IsFeatureFlagEnum(ISymbol type)
     {
-        const string ffNamespace = nameof(Stravaig) + "." + nameof(Stravaig.FeatureFlags);
         var attributes = type.GetAttributes();
         var result = attributes
             .Any(a => a.AttributeClass is { 
@@ -145,7 +144,6 @@ public static class {name}ServiceExtensions
         var ns = type.ContainingNamespace.IsGlobalNamespace
             ? null
             : type.ContainingNamespace.ToString();
-        var name = type.Name;
         var items = GetItemNames(type);
 
         StringBuilder sb = new StringBuilder();
