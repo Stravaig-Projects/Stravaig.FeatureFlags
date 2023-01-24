@@ -40,11 +40,11 @@ jobs:
     env:
       STRAVAIG_SOLUTION: src/Stravaig.FeatureFlags.sln
       STRAVAIG_TESTS: Stravaig.FeatureFlags.Tests
-      STRAVAIG_PROJECT: Stravaig.FeatureFlags
+      STRAVAIG_PROJECT: Stravaig.FeatureFlags.SourceGenerator
     
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -65,12 +65,12 @@ jobs:
           echo "Is Preview: $STRAVAIG_IS_PREVIEW"
           echo "Is Stable: $STRAVAIG_IS_STABLE"
           
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         name: Setup .NET 6.0 (LTS)
         with:
           dotnet-version: 6.0.x
 
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         name: Setup .NET 7.0 (STS)
         with:
           dotnet-version: 7.0.x
@@ -109,7 +109,7 @@ jobs:
 
       - name: Archive Simulated Release Information
         if: ${{ env.STRAVAIG_PUBLISH_TO_NUGET == 'false' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: simulated-release-information
           path: |
@@ -121,7 +121,7 @@ jobs:
 
       - name: Archive Release Notes
         if: ${{ env.STRAVAIG_PUBLISH_TO_NUGET == 'true' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: release-information
           path: |
