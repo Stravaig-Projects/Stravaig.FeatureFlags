@@ -22,7 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Verify.NUnit" Version="19.7.1" />
+    <PackageReference Include="Verify.NUnit" Version="19.12.2" />
     <PackageReference Include="Verify.SourceGenerators" Version="2.0.1" />
   </ItemGroup>
 
