@@ -10,7 +10,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
-	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <GenerateDocumentationFile>false</GenerateDocumentationFile>
 	  <StravaigBuildTime>$([System.DateTime]::Now.ToString("dddd, d MMMM yyyy 'at' HH:mm:ss zzzz"))</StravaigBuildTime>
 	  <StravaigCopyrightYear>$([System.DateTime]::Now.ToString("yyyy"))</StravaigCopyrightYear>
 	  <StravaigGitHubCommit>$(GITHUB_SHA)</StravaigGitHubCommit>
@@ -54,8 +54,5 @@
 		<PackageReference Include="Microsoft.FeatureManagement" Version="2.5.1" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Testing\" />
-	</ItemGroup>
+  
 </Project>

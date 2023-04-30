@@ -1,37 +1,72 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using System.Text;
 using System.Threading;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Stravaig.FeatureFlags.SourceGenerator;
 
+[StronglyTypedFeatureFlags, Flags]
+[SuppressMessage("", "")]
+public enum SampleFeatureFlags
+{
+    Alpha,
+    
+    [Lifetime(Lifetime.Transient)]
+    Beta,
+    
+    [Lifetime(Lifetime.Scoped)]
+    Gamma,
+    
+    [Lifetime(Lifetime.Singleton)]
+    Delta,
+}
+
 [Generator]
 public class FeatureFlagSourceGenerator : IIncrementalGenerator
 {
+    public class GeneratorContext
+    {
+        public EnumDeclarationSyntax EnumDeclaration { get; }
+        public SemanticModel SemanticModel { get; }
+
+        public TypeInfo GetEnumTypeInfo() => SemanticModel.GetTypeInfo(EnumDeclaration);
+        
+        public GeneratorContext(EnumDeclarationSyntax enumDeclaration, SemanticModel semanticModel)
+        {
+            EnumDeclaration = enumDeclaration;
+            SemanticModel = semanticModel;
+        }
+    }
+    
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var enumTypes = context.SyntaxProvider
-            .CreateSyntaxProvider(CouldBeFeatureFlagAsync, GetEnumTypeOrNull)
-            .Where(type => type is not null)
-            .Collect();
-
+            .CreateSyntaxProvider(IsFeatureFlagEnum, (ctx, _) => new GeneratorContext((EnumDeclarationSyntax)ctx.Node, ctx.SemanticModel);
+        
         context.RegisterSourceOutput(enumTypes, GenerateCode);
     }
 
-    private static bool CouldBeFeatureFlagAsync(
+    private static bool IsFeatureFlagEnum(
         SyntaxNode syntaxNode,
         CancellationToken cancellationToken)
     {
-        if (syntaxNode is not AttributeSyntax attribute)
+        if (!syntaxNode.IsKind(SyntaxKind.EnumDeclaration))
             return false;
 
-        var name = ExtractName(attribute.Name);
+        var enumDeclaration = (EnumDeclarationSyntax)syntaxNode;
 
-        return name is nameof(StronglyTypedFeatureFlagsAttribute) or "StronglyTypedFeatureFlags";
+        var attributes = enumDeclaration.AttributeLists
+            .SelectMany(al => al.Attributes).ToImmutableArray();
+        if (attributes.Length == 0)
+            return false;
+        
+        return attributes.Any(a => ExtractName(a.Name) is nameof(StronglyTypedFeatureFlagsAttribute) or "StronglyTypedFeatureFlags");
     }
 
     private static string? ExtractName(NameSyntax? name)
@@ -44,51 +79,27 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
         };
     }
 
-    private static ITypeSymbol? GetEnumTypeOrNull(
-        GeneratorSyntaxContext context,
-        CancellationToken cancellationToken)
-    {
-        var attributeSyntax = (AttributeSyntax)context.Node;
-
-        // "attribute.Parent" is "AttributeListSyntax"
-        // "attribute.Parent.Parent" is a C# fragment the attributes are applied to
-        if (attributeSyntax.Parent?.Parent is not EnumDeclarationSyntax classDeclaration)
-            return null;
-
-        return context.SemanticModel.GetDeclaredSymbol(classDeclaration) is not ITypeSymbol type || !IsFeatureFlagEnum(type)
-            ? null
-            : type;
-    }
-
-    private static bool IsFeatureFlagEnum(ISymbol type)
-    {
-        var attributes = type.GetAttributes();
-        var result = attributes
-            .Any(a => a.AttributeClass is { 
-                Name: nameof(StronglyTypedFeatureFlagsAttribute) or "StronglyTypedFeatureFlags",
-            });
-        return result;
-    }
-
     private static void GenerateCode(
-        SourceProductionContext context,
-        ImmutableArray<ITypeSymbol> enumerations)
+        SourceProductionContext productionContext,
+        GeneratorContext generatorContext)
     {
-        if (enumerations.IsDefaultOrEmpty)
-            return;
-
-        foreach (var type in enumerations)
-        {
-            var code = GenerateCode(type);
-            var typeNamespace = type.ContainingNamespace.IsGlobalNamespace
-                ? null
-                : $"{type.ContainingNamespace}.";
-
-            context.AddSource($"{typeNamespace}{type.Name}.g.cs", code);
-
-            var testCode = GenerateTestCode(type);
-            context.AddSource($"{typeNamespace}Testing.{type.Name}.g.cs", testCode);
-        }
+        var enumType = generatorContext.GetEnumTypeInfo();
+        var enumNamespace = enumType.Type?.ContainingNamespace;
+        
+        
+        
+        // foreach (var type in enumerations)
+        // {
+        //     var code = GenerateCode(type);
+        //     var typeNamespace = type.ContainingNamespace.IsGlobalNamespace
+        //         ? null
+        //         : $"{type.ContainingNamespace}.";
+        //
+        //     productionContext.AddSource($"{typeNamespace}{type.Name}.g.cs", code);
+        //
+        //     var testCode = GenerateTestCode(type);
+        //     productionContext.AddSource($"{typeNamespace}Testing.{type.Name}.g.cs", testCode);
+        // }
     }
 
     private static string GenerateCode(ITypeSymbol type)
