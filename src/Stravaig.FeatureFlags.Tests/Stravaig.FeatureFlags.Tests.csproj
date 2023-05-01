@@ -31,4 +31,13 @@
     <ProjectReference Include="..\Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SimpleTest.HappyPathTest#MyTestNamespace.FeatureFlags.g.verified.cs">
+      <DependentUpon>NamespaceTests.cs</DependentUpon>
+    </None>
+    <None Update="SimpleTest.HappyPathTest#MyTestNamespace.Testing.FeatureFlags.g.verified.cs">
+      <DependentUpon>NamespaceTests.cs</DependentUpon>
+    </None>
+  </ItemGroup>
+
 </Project>
