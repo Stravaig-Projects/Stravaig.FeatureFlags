@@ -14,8 +14,6 @@ namespace My.Test.Namespace;
 [StronglyTypedFeatureFlags]
 public enum FeatureFlags
 {
-    FeatureOne,
-    FeatureTwo,
 }
 ";
 
@@ -33,8 +31,6 @@ namespace My.Test.Namespace
     [StronglyTypedFeatureFlags]
     public enum FeatureFlags
     {
-        FeatureOne,
-        FeatureTwo,
     }
 }
 ";
