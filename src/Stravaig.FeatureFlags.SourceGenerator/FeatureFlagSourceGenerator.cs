@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace Stravaig.FeatureFlags.SourceGenerator;
 
-[StronglyTypedFeatureFlags]
+[StronglyTypedFeatureFlags(DefaultLifetime = Lifetime.Transient)]
 public enum SampleFeatureFlags
 {
     Alpha,
@@ -42,6 +42,30 @@ public class SourceWriter
 
     private SyntaxKind? GetNamespaceKind() =>
         GetNamespaceOfEnum()?.Kind();
+
+    private string GetDefaultLifetime()
+    {
+        var attr = _enumDeclaration.AttributeLists
+            .SelectMany(al => al.Attributes)
+            .First(a => ExtractName(a.Name) is nameof(StronglyTypedFeatureFlagsAttribute) or "StronglyTypedFeatureFlags");
+
+        var defaultLifetimeArg =
+            attr.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "DefaultLifetime");
+        if (defaultLifetimeArg == null)
+            return "Scoped";
+
+        return ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
+    }
+
+    private static string? ExtractName(NameSyntax? name)
+    {
+        return name switch
+        {
+            SimpleNameSyntax ins => ins.Identifier.Text,
+            QualifiedNameSyntax qns => qns.Right.Identifier.Text,
+            _ => null
+        };
+    }
 
     public SourceWriter(EnumDeclarationSyntax enumDeclaration, SemanticModel semanticModel)
     {
@@ -86,6 +110,7 @@ public class SourceWriter
         if (enumMembers.Count == 0)
             return;
 
+        string defaultLifetime = GetDefaultLifetime();
         string enumName = _enumDeclaration.Identifier.Text;
         fileContent.AppendLine(@$"
 {indent}public static class {enumName}ServiceExtensions
@@ -94,8 +119,9 @@ public class SourceWriter
 {indent}    {{");
         foreach (var item in enumMembers)
         {
+            var lifetime = defaultLifetime;
             string flagName = item.Identifier.Text;
-            fileContent.AppendLine($"{indent}        builder.Services.AddScoped<I{flagName}FeatureFlag, {flagName}FeatureFlag>();");
+            fileContent.AppendLine($"{indent}        builder.Services.Add{lifetime}<I{flagName}FeatureFlag, {flagName}FeatureFlag>();");
         }
 
         fileContent.AppendLine($@"{indent}        return builder;

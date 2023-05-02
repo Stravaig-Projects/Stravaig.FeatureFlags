@@ -5,10 +5,10 @@ namespace Stravaig.FeatureFlags;
 [AttributeUsage(AttributeTargets.Enum)]
 public sealed class StronglyTypedFeatureFlagsAttribute : Attribute
 {
-    public Lifetime DefaultLifetime { get; }
+    public Lifetime DefaultLifetime { get; set; }
 
-    public StronglyTypedFeatureFlagsAttribute(Lifetime defaultLifetime = Lifetime.Scoped)
+    public StronglyTypedFeatureFlagsAttribute()
     {
-        DefaultLifetime = defaultLifetime;
+        DefaultLifetime = Lifetime.Scoped;
     }
 }
