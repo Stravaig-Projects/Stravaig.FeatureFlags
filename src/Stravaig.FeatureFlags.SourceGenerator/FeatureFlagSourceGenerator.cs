@@ -12,22 +12,6 @@ using System.Xml.Linq;
 
 namespace Stravaig.FeatureFlags.SourceGenerator;
 
-[StronglyTypedFeatureFlags(DefaultLifetime = Lifetime.Transient)]
-public enum SampleFeatureFlags
-{
-    Alpha,
-    
-    [Lifetime(Lifetime.Transient)]
-    Beta,
-    
-    [Lifetime(Lifetime.Scoped)]
-    Gamma,
-    
-    [Lifetime(Lifetime.Singleton)]
-    Delta,
-}
-
-
 public class SourceWriter
 {
     private readonly EnumDeclarationSyntax _enumDeclaration;
@@ -47,7 +31,7 @@ public class SourceWriter
     {
         var attr = _enumDeclaration.AttributeLists
             .SelectMany(al => al.Attributes)
-            .First(a => ExtractName(a.Name) is nameof(StronglyTypedFeatureFlagsAttribute) or "StronglyTypedFeatureFlags");
+            .First(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
 
         var defaultLifetimeArg =
             attr.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "DefaultLifetime");
@@ -119,7 +103,7 @@ public class SourceWriter
 {indent}    {{");
         foreach (var item in enumMembers)
         {
-            var lifetime = defaultLifetime;
+            var lifetime = GetFeatureFlagLifetime(item, defaultLifetime);
             string flagName = item.Identifier.Text;
             fileContent.AppendLine($"{indent}        builder.Services.Add{lifetime}<I{flagName}FeatureFlag, {flagName}FeatureFlag>();");
         }
@@ -127,6 +111,22 @@ public class SourceWriter
         fileContent.AppendLine($@"{indent}        return builder;
 {indent}    }}
 {indent}}}");
+    }
+
+    private string GetFeatureFlagLifetime(EnumMemberDeclarationSyntax enumMember, string defaultLifetime)
+    {
+        var lifetimeAttribute = enumMember.AttributeLists
+            .SelectMany(al => al.Attributes)
+            .FirstOrDefault(a => a.Name.ToString() == "Lifetime");
+
+        if (lifetimeAttribute == null)
+            return defaultLifetime;
+
+        var arg = lifetimeAttribute.ArgumentList?.Arguments.FirstOrDefault();
+        if (arg == null)
+            return defaultLifetime;
+        
+        return ((MemberAccessExpressionSyntax)arg.Expression).Name.ToString();
     }
 
     private void AddStronglyTypedFeatureFlagClasses(StringBuilder fileContent, string indent)
@@ -230,7 +230,7 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
         if (attributes.Length == 0)
             return false;
         
-        return attributes.Any(a => ExtractName(a.Name) is nameof(StronglyTypedFeatureFlagsAttribute) or "StronglyTypedFeatureFlags");
+        return attributes.Any(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
     }
 
     private static string? ExtractName(NameSyntax? name)

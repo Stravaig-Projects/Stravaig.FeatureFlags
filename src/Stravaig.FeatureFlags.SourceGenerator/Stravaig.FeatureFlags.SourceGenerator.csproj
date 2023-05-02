@@ -59,10 +59,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- Package the generator in the analyzer directory of the nuget package -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>

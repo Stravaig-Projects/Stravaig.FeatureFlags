@@ -11,7 +11,9 @@
     <LangVersion>11</LangVersion>
     <Nullable>enable</Nullable>
 	  <GenerateDocumentationFile>false</GenerateDocumentationFile>
-	  <StravaigBuildTime>$([System.DateTime]::Now.ToString("dddd, d MMMM yyyy 'at' HH:mm:ss zzzz"))</StravaigBuildTime>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
+
+    <StravaigBuildTime>$([System.DateTime]::Now.ToString("dddd, d MMMM yyyy 'at' HH:mm:ss zzzz"))</StravaigBuildTime>
 	  <StravaigCopyrightYear>$([System.DateTime]::Now.ToString("yyyy"))</StravaigCopyrightYear>
 	  <StravaigGitHubCommit>$(GITHUB_SHA)</StravaigGitHubCommit>
 	  <StravaigWorkflowUrl>$(GITHUB_SERVER_URL)/$(GITHUB_REPOSITORY)/actions/runs/$(GITHUB_RUN_ID)</StravaigWorkflowUrl>
@@ -54,5 +56,15 @@
 		<PackageReference Include="Microsoft.FeatureManagement" Version="2.5.1" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
-  
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj" />
+	</ItemGroup>
+
+
+  <Target Name="_AddAnalyzersToOutput">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="$(OutputPath)\Stravaig.FeatureFlags.SourceGenerator.dll" PackagePath="analyzers/dotnet/cs" />
+    </ItemGroup>
+  </Target>
 </Project>
