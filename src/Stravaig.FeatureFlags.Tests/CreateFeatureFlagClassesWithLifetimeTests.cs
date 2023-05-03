@@ -74,4 +74,31 @@ public enum FeatureFlags
 
         await VerifyGeneratedSource(source);
     }
+
+    [Test]
+    public async Task DefaultAndSpecificLifetimeTest()
+    {
+        const string source = @"
+using Stravaig.FeatureFlags;
+
+namespace My.Test.Namespace;
+
+[StronglyTypedFeatureFlags(DefaultLifetime = Lifetime.Scoped)]
+public enum FeatureFlags
+{
+    [Lifetime(Lifetime.Transient)]
+    TheTransientFeature,
+
+    [Lifetime(Lifetime.Scoped)]
+    TheScopedFeature,
+
+    [Lifetime(Lifetime.Singleton)]
+    TheSingletonFeature,
+
+    TheDefaultFeature,
+}
+";
+
+        await VerifyGeneratedSource(source);
+    }
 }
