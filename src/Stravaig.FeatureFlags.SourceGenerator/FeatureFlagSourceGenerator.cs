@@ -107,24 +107,9 @@ public class SourceWriter
         fileContent.Clear();
         AddFileHeader(fileContent);
         indent = AddNamespaceStart(fileContent, namespaceName, isTesting: true);
-        AddNamespaceEnd(fileContent, namespaceName);
         AddTestingClasses(fileContent, indent);
+        AddNamespaceEnd(fileContent, namespaceName);
         WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent, isTesting: true);
-
-
-
-        // foreach (var type in enumerations)
-        // {
-        //     var code = GenerateCode(type);
-        //     var typeNamespace = type.ContainingNamespace.IsGlobalNamespace
-        //         ? null
-        //         : $"{type.ContainingNamespace}.";
-        //
-        //     productionContext.AddSource($"{typeNamespace}{type.Name}.g.cs", code);
-        //
-        //     var testCode = GenerateTestCode(type);
-        //     productionContext.AddSource($"{typeNamespace}Testing.{type.Name}.g.cs", testCode);
-        // }
     }
 
     private void AddTestingClasses(StringBuilder fileContent, string indent)
@@ -137,21 +122,21 @@ public class SourceWriter
         {
             string flagName = item.Identifier.Text;
             fileContent.AppendLine(@$"
-public sealed class Fake{flagName}FeatureFlag : I{flagName}FeatureFlag
-{{
-    public static readonly Fake{flagName}FeatureFlag Enabled = new (true);
-    public static readonly Fake{flagName}FeatureFlag Disabled = new (false);
+{indent}public sealed class Fake{flagName}FeatureFlag : I{flagName}FeatureFlag
+{indent}{{
+{indent}    public static readonly Fake{flagName}FeatureFlag Enabled = new (true);
+{indent}    public static readonly Fake{flagName}FeatureFlag Disabled = new (false);
 
-    private readonly bool _state;
-    public Fake{flagName}FeatureFlag(bool state)
-    {{
-        _state = state;
-    }}
+{indent}    private readonly bool _state;
+{indent}    public Fake{flagName}FeatureFlag(bool state)
+{indent}    {{
+{indent}        _state = state;
+{indent}    }}
 
-    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
+{indent}    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
 
-    public bool IsEnabled() => _state;
-}}
+{indent}    public bool IsEnabled() => _state;
+{indent}}}
 ");
         }
     }
