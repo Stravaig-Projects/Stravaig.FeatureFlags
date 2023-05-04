@@ -58,7 +58,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj" />
+	  <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj" PrivateAssets="All" />
 	</ItemGroup>
 
 
