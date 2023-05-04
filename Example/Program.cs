@@ -3,5 +3,6 @@
 [StronglyTypedFeatureFlags]
 public enum MyFeatures
 {
-    
+    Alpha,
+    Beta,
 }

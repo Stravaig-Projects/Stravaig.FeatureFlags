@@ -11,7 +11,7 @@ public interface IFeatureOneFeatureFlag : IStronglyTypedFeatureFlag
 
 public sealed class FeatureOneFeatureFlag : StronglyTypedFeatureFlag, IFeatureOneFeatureFlag
 {
-    public FeatureOneFeatureFlat(IFeatureManager featureManager)
+    public FeatureOneFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "FeatureOne")
     {
     }
@@ -23,7 +23,7 @@ public interface IFeatureTwoFeatureFlag : IStronglyTypedFeatureFlag
 
 public sealed class FeatureTwoFeatureFlag : StronglyTypedFeatureFlag, IFeatureTwoFeatureFlag
 {
-    public FeatureTwoFeatureFlat(IFeatureManager featureManager)
+    public FeatureTwoFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "FeatureTwo")
     {
     }

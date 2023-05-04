@@ -1,11 +1,11 @@
 $packagesDir = "$PSScriptRoot/packages"
 $project = [System.IO.Path]::GetFullPath("$PSScriptRoot/../src/Stravaig.FeatureFlags/Stravaig.FeatureFlags.csproj");
 
-#$now = (Get-Date);
-#$version = $now.ToString("yy.M.d");
-#$suffix = $now.ToString("HHmmss");
-$version = "0.0.0";
-$suffix = "000000";
+$now = (Get-Date);
+$version = $now.ToString("yy.M.d");
+$suffix = $now.ToString("HHmmss");
+#$version = "0.0.0";
+#$suffix = "000000";
 
 
 if ((Test-Path $packagesDir) -eq $false)
