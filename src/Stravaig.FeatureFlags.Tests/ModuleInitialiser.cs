@@ -7,6 +7,6 @@ public static class ModuleInitialiser
     [ModuleInitializer]
     public static void Init()
     {
-        VerifySourceGenerators.Enable();
+        VerifySourceGenerators.Initialize();
     }
 }

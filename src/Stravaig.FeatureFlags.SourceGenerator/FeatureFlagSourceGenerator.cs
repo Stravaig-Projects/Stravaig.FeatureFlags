@@ -63,8 +63,6 @@ public class SourceWriter
                 // TODO: process other possibilities.
                 return false;
         }
-
-        return false;
     }
 
     private static string? ExtractName(NameSyntax? name)
