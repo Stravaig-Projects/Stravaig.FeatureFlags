@@ -10,7 +10,7 @@ namespace My.Test.Namespace
     {
     }
 
-    public sealed class FeatureOneFeatureFlag : StronglyTypedFeatureFlag, IFeatureOneFeatureFlag
+    public sealed class FeatureOneFeatureFlag : FeatureFlag, IFeatureOneFeatureFlag
     {
         public FeatureOneFeatureFlag(IFeatureManager featureManager)
             : base(featureManager, "FeatureOne")
@@ -22,7 +22,7 @@ namespace My.Test.Namespace
     {
     }
 
-    public sealed class FeatureTwoFeatureFlag : StronglyTypedFeatureFlag, IFeatureTwoFeatureFlag
+    public sealed class FeatureTwoFeatureFlag : FeatureFlag, IFeatureTwoFeatureFlag
     {
         public FeatureTwoFeatureFlag(IFeatureManager featureManager)
             : base(featureManager, "FeatureTwo")

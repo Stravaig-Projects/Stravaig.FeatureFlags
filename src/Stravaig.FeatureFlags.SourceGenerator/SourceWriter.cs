@@ -185,7 +185,7 @@ public class SourceWriter
 {indent}{{
 {indent}}}
 
-{indent}public sealed class {name}FeatureFlag : StronglyTypedFeatureFlag, I{name}FeatureFlag
+{indent}public sealed class {name}FeatureFlag : FeatureFlag, I{name}FeatureFlag
 {indent}{{
 {indent}    public {name}FeatureFlag(IFeatureManager featureManager)
 {indent}        : base(featureManager, ""{name}"")

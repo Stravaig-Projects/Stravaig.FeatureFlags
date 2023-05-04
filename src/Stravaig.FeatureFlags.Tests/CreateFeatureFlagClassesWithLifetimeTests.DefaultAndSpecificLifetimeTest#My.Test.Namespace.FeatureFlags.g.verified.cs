@@ -9,7 +9,7 @@ public interface ITheTransientFeatureFeatureFlag : IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheTransientFeatureFeatureFlag : StronglyTypedFeatureFlag, ITheTransientFeatureFeatureFlag
+public sealed class TheTransientFeatureFeatureFlag : FeatureFlag, ITheTransientFeatureFeatureFlag
 {
     public TheTransientFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheTransientFeature")
@@ -21,7 +21,7 @@ public interface ITheScopedFeatureFeatureFlag : IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheScopedFeatureFeatureFlag : StronglyTypedFeatureFlag, ITheScopedFeatureFeatureFlag
+public sealed class TheScopedFeatureFeatureFlag : FeatureFlag, ITheScopedFeatureFeatureFlag
 {
     public TheScopedFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheScopedFeature")
@@ -33,7 +33,7 @@ public interface ITheSingletonFeatureFeatureFlag : IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheSingletonFeatureFeatureFlag : StronglyTypedFeatureFlag, ITheSingletonFeatureFeatureFlag
+public sealed class TheSingletonFeatureFeatureFlag : FeatureFlag, ITheSingletonFeatureFeatureFlag
 {
     public TheSingletonFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheSingletonFeature")
@@ -45,7 +45,7 @@ public interface ITheDefaultFeatureFeatureFlag : IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheDefaultFeatureFeatureFlag : StronglyTypedFeatureFlag, ITheDefaultFeatureFeatureFlag
+public sealed class TheDefaultFeatureFeatureFlag : FeatureFlag, ITheDefaultFeatureFeatureFlag
 {
     public TheDefaultFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheDefaultFeature")

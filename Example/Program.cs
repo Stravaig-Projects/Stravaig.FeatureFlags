@@ -5,4 +5,5 @@ public enum MyFeatures
 {
     Alpha,
     Beta,
+    Gamma,
 }
