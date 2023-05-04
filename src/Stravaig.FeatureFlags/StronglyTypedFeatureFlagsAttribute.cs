@@ -7,6 +7,8 @@ public sealed class StronglyTypedFeatureFlagsAttribute : Attribute
 {
     public Lifetime DefaultLifetime { get; set; }
 
+    public bool IncludeTestFakes { get; set; }
+
     public StronglyTypedFeatureFlagsAttribute()
     {
         DefaultLifetime = Lifetime.Scoped;

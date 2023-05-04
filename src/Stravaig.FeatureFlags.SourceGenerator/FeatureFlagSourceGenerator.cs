@@ -41,6 +41,32 @@ public class SourceWriter
         return ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
     }
 
+    private bool IncludeTestFakes()
+    {
+        var attr = _enumDeclaration.AttributeLists
+            .SelectMany(al => al.Attributes)
+            .First(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
+
+        var testFakesArg =
+            attr.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "IncludeTestFakes");
+        if (testFakesArg == null)
+            return false;
+
+
+        switch (testFakesArg.Expression.Kind())
+        {
+            case SyntaxKind.TrueLiteralExpression:
+                return true;
+            case SyntaxKind.FalseLiteralExpression:
+                return false;
+            default:
+                // TODO: process other possibilities.
+                return false;
+        }
+
+        return false;
+    }
+
     private static string? ExtractName(NameSyntax? name)
     {
         return name switch
@@ -74,6 +100,19 @@ public class SourceWriter
 
         WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent);
 
+        bool includeFakes = IncludeTestFakes();
+        if (!includeFakes)
+            return;
+
+        fileContent.Clear();
+        AddFileHeader(fileContent);
+        indent = AddNamespaceStart(fileContent, namespaceName, isTesting: true);
+        AddNamespaceEnd(fileContent, namespaceName);
+        AddTestingClasses(fileContent, indent);
+        WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent, isTesting: true);
+
+
+
         // foreach (var type in enumerations)
         // {
         //     var code = GenerateCode(type);
@@ -86,6 +125,35 @@ public class SourceWriter
         //     var testCode = GenerateTestCode(type);
         //     productionContext.AddSource($"{typeNamespace}Testing.{type.Name}.g.cs", testCode);
         // }
+    }
+
+    private void AddTestingClasses(StringBuilder fileContent, string indent)
+    {
+        var enumMembers = _enumDeclaration.Members;
+        if (enumMembers.Count == 0)
+            return;
+
+        foreach (var item in enumMembers)
+        {
+            string flagName = item.Identifier.Text;
+            fileContent.AppendLine(@$"
+public sealed class Fake{flagName}FeatureFlag : I{flagName}FeatureFlag
+{{
+    public static readonly Fake{flagName}FeatureFlag Enabled = new (true);
+    public static readonly Fake{flagName}FeatureFlag Disabled = new (false);
+
+    private readonly bool _state;
+    public Fake{flagName}FeatureFlag(bool state)
+    {{
+        _state = state;
+    }}
+
+    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
+
+    public bool IsEnabled() => _state;
+}}
+");
+        }
     }
 
     private void AddBuilderClass(StringBuilder fileContent, string indent)
@@ -154,10 +222,12 @@ public class SourceWriter
     private void WriteFeatureFlagClassesFile(
         SourceProductionContext productionContext,
         string? namespaceName,
-        StringBuilder fileContent)
+        StringBuilder fileContent,
+        bool isTesting = false)
     {
+        var testing = isTesting ? ".Testing" : string.Empty;
         var enumName = _enumDeclaration.Identifier.Text;
-        var fileName = $"{namespaceName ?? "global."}.{enumName}.g.cs";
+        var fileName = $"{namespaceName ?? "global."}{testing}.{enumName}.g.cs";
         var source = fileContent.ToString();
         productionContext.AddSource(fileName, source);
     }
@@ -171,12 +241,14 @@ public class SourceWriter
         fileContent.AppendLine();
     }
 
-    private string AddNamespaceStart(StringBuilder fileContent, string? namespaceName)
+    private string AddNamespaceStart(StringBuilder fileContent, string? namespaceName, bool isTesting = false)
     {
         if (string.IsNullOrWhiteSpace(namespaceName))
             return string.Empty;
 
         fileContent.Append($"namespace {namespaceName}");
+        if (isTesting)
+            fileContent.Append(".Testing");
 
         var kind = GetNamespaceKind();
         if (kind == SyntaxKind.FileScopedNamespaceDeclaration)
