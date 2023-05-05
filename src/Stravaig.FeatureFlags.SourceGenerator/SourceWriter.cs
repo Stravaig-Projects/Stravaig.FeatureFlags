@@ -114,20 +114,14 @@ public class SourceWriter
         {
             string flagName = item.Identifier.Text;
             fileContent.AppendLine(@$"
-{indent}public sealed class Fake{flagName}FeatureFlag : I{flagName}FeatureFlag
+{indent}public sealed class Fake{flagName}FeatureFlag : Stravaig.FeatureFlags.Testing.FakeFeatureFlag, I{flagName}FeatureFlag
 {indent}{{
-{indent}    public static readonly Fake{flagName}FeatureFlag Enabled = new (true);
-{indent}    public static readonly Fake{flagName}FeatureFlag Disabled = new (false);
+{indent}    public static readonly Fake{flagName}FeatureFlag Enabled = new Fake{flagName}FeatureFlag(true);
+{indent}    public static readonly Fake{flagName}FeatureFlag Disabled = new Fake{flagName}FeatureFlag(false);
 
-{indent}    private readonly bool _state;
-{indent}    public Fake{flagName}FeatureFlag(bool state)
+{indent}    public Fake{flagName}FeatureFlag(bool state) : base(state)
 {indent}    {{
-{indent}        _state = state;
 {indent}    }}
-
-{indent}    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
-
-{indent}    public bool IsEnabled() => _state;
 {indent}}}
 ");
         }
@@ -181,11 +175,11 @@ public class SourceWriter
         foreach (var item in enumMembers)
         {
             string name = item.Identifier.Text;
-            fileContent.AppendLine(@$"{indent}public interface I{name}FeatureFlag : IStronglyTypedFeatureFlag
+            fileContent.AppendLine(@$"{indent}public interface I{name}FeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {indent}{{
 {indent}}}
 
-{indent}public sealed class {name}FeatureFlag : FeatureFlag, I{name}FeatureFlag
+{indent}public sealed class {name}FeatureFlag : Stravaig.FeatureFlags.FeatureFlag, I{name}FeatureFlag
 {indent}{{
 {indent}    public {name}FeatureFlag(IFeatureManager featureManager)
 {indent}        : base(featureManager, ""{name}"")

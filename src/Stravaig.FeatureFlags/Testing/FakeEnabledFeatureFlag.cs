@@ -2,9 +2,15 @@ using System.Threading.Tasks;
 
 namespace Stravaig.FeatureFlags.Testing;
 
-public class FakeEnabledFeatureFlag : IStronglyTypedFeatureFlag
+public class FakeFeatureFlag : IStronglyTypedFeatureFlag
 {
-    public Task<bool> IsEnabledAsync() => Task.FromResult(true);
+    private readonly bool _state;
+    public FakeFeatureFlag(bool state)
+    {
+        _state = state;
+    }
 
-    public bool IsEnabled() => true;
+    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
+
+    public bool IsEnabled() => _state;
 }

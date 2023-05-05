@@ -1,9 +1,13 @@
-﻿using Stravaig.FeatureFlags;
-
-[StronglyTypedFeatureFlags]
-public enum MyFeatures
+﻿namespace Example
 {
-    Alpha,
-    Beta,
-    Gamma,
+    public static class Program
+    {
+        public static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+
+            var ff = FakeAlphaFeatureFlag.Enable();
+        }
+    }
 }
+

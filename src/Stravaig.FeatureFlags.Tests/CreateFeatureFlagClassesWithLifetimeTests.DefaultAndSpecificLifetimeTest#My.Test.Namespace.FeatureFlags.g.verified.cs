@@ -6,11 +6,11 @@ using Microsoft.FeatureManagement;
 using Stravaig.FeatureFlags;
 
 namespace My.Test.Namespace;
-public interface ITheTransientFeatureFeatureFlag : IStronglyTypedFeatureFlag
+public interface ITheTransientFeatureFeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheTransientFeatureFeatureFlag : FeatureFlag, ITheTransientFeatureFeatureFlag
+public sealed class TheTransientFeatureFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, ITheTransientFeatureFeatureFlag
 {
     public TheTransientFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheTransientFeature")
@@ -18,11 +18,11 @@ public sealed class TheTransientFeatureFeatureFlag : FeatureFlag, ITheTransientF
     }
 }
 
-public interface ITheScopedFeatureFeatureFlag : IStronglyTypedFeatureFlag
+public interface ITheScopedFeatureFeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheScopedFeatureFeatureFlag : FeatureFlag, ITheScopedFeatureFeatureFlag
+public sealed class TheScopedFeatureFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, ITheScopedFeatureFeatureFlag
 {
     public TheScopedFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheScopedFeature")
@@ -30,11 +30,11 @@ public sealed class TheScopedFeatureFeatureFlag : FeatureFlag, ITheScopedFeature
     }
 }
 
-public interface ITheSingletonFeatureFeatureFlag : IStronglyTypedFeatureFlag
+public interface ITheSingletonFeatureFeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheSingletonFeatureFeatureFlag : FeatureFlag, ITheSingletonFeatureFeatureFlag
+public sealed class TheSingletonFeatureFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, ITheSingletonFeatureFeatureFlag
 {
     public TheSingletonFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheSingletonFeature")
@@ -42,11 +42,11 @@ public sealed class TheSingletonFeatureFeatureFlag : FeatureFlag, ITheSingletonF
     }
 }
 
-public interface ITheDefaultFeatureFeatureFlag : IStronglyTypedFeatureFlag
+public interface ITheDefaultFeatureFeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class TheDefaultFeatureFeatureFlag : FeatureFlag, ITheDefaultFeatureFeatureFlag
+public sealed class TheDefaultFeatureFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, ITheDefaultFeatureFeatureFlag
 {
     public TheDefaultFeatureFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "TheDefaultFeature")

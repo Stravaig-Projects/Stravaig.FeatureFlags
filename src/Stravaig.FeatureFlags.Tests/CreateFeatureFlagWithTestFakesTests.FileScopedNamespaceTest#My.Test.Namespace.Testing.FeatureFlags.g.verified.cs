@@ -6,36 +6,24 @@ using Stravaig.FeatureFlags;
 
 namespace My.Test.Namespace.Testing;
 
-public sealed class FakeFeatureOneFeatureFlag : IFeatureOneFeatureFlag
+public sealed class FakeFeatureOneFeatureFlag : Stravaig.FeatureFlags.Testing.FakeFeatureFlag, IFeatureOneFeatureFlag
 {
-    public static readonly FakeFeatureOneFeatureFlag Enabled = new (true);
-    public static readonly FakeFeatureOneFeatureFlag Disabled = new (false);
+    public static readonly FakeFeatureOneFeatureFlag Enabled = new FakeFeatureOneFeatureFlag(true);
+    public static readonly FakeFeatureOneFeatureFlag Disabled = new FakeFeatureOneFeatureFlag(false);
 
-    private readonly bool _state;
-    public FakeFeatureOneFeatureFlag(bool state)
+    public FakeFeatureOneFeatureFlag(bool state) : base(state)
     {
-        _state = state;
     }
-
-    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
-
-    public bool IsEnabled() => _state;
 }
 
 
-public sealed class FakeFeatureTwoFeatureFlag : IFeatureTwoFeatureFlag
+public sealed class FakeFeatureTwoFeatureFlag : Stravaig.FeatureFlags.Testing.FakeFeatureFlag, IFeatureTwoFeatureFlag
 {
-    public static readonly FakeFeatureTwoFeatureFlag Enabled = new (true);
-    public static readonly FakeFeatureTwoFeatureFlag Disabled = new (false);
+    public static readonly FakeFeatureTwoFeatureFlag Enabled = new FakeFeatureTwoFeatureFlag(true);
+    public static readonly FakeFeatureTwoFeatureFlag Disabled = new FakeFeatureTwoFeatureFlag(false);
 
-    private readonly bool _state;
-    public FakeFeatureTwoFeatureFlag(bool state)
+    public FakeFeatureTwoFeatureFlag(bool state) : base(state)
     {
-        _state = state;
     }
-
-    public Task<bool> IsEnabledAsync() => Task.FromResult(_state);
-
-    public bool IsEnabled() => _state;
 }
 

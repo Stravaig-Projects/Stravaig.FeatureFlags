@@ -6,11 +6,11 @@ using Microsoft.FeatureManagement;
 using Stravaig.FeatureFlags;
 
 namespace My.Test.Namespace;
-public interface IFeatureOneFeatureFlag : IStronglyTypedFeatureFlag
+public interface IFeatureOneFeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class FeatureOneFeatureFlag : FeatureFlag, IFeatureOneFeatureFlag
+public sealed class FeatureOneFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, IFeatureOneFeatureFlag
 {
     public FeatureOneFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "FeatureOne")
@@ -18,11 +18,11 @@ public sealed class FeatureOneFeatureFlag : FeatureFlag, IFeatureOneFeatureFlag
     }
 }
 
-public interface IFeatureTwoFeatureFlag : IStronglyTypedFeatureFlag
+public interface IFeatureTwoFeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
 {
 }
 
-public sealed class FeatureTwoFeatureFlag : FeatureFlag, IFeatureTwoFeatureFlag
+public sealed class FeatureTwoFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, IFeatureTwoFeatureFlag
 {
     public FeatureTwoFeatureFlag(IFeatureManager featureManager)
         : base(featureManager, "FeatureTwo")
