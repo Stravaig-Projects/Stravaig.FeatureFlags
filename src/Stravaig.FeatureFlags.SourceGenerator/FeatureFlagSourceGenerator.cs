@@ -21,7 +21,7 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
     private static void GenerateCode(SourceProductionContext ctx, SourceWriter writer) => writer.GenerateCode(ctx);    
 
     private static SourceWriter CreateSourceWriter(GeneratorSyntaxContext ctx, CancellationToken _)
-        => new ((EnumDeclarationSyntax)ctx.Node, ctx.SemanticModel);
+        => new ((EnumDeclarationSyntax)ctx.Node);
     
     private static bool IsFeatureFlagEnum(
         SyntaxNode syntaxNode,
