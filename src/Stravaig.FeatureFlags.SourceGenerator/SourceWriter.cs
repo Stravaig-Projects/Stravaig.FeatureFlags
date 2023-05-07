@@ -42,11 +42,16 @@ public class SourceWriter
         if (defaultLifetimeArg == null)
             return new(_enumDeclaration, DefaultLifetime);
 
-        var value = ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
-        if (ValidLifetimes.Contains(value, StringComparer.Ordinal))
-            return new(defaultLifetimeArg, value);
+        if (defaultLifetimeArg.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
+        {
+            string value = ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
+            if (!ValidLifetimes.Contains(value, StringComparer.Ordinal))
+                return new(defaultLifetimeArg, DefaultLifetime, $"Lifetime of \"{value}\" specified is invalid. Using {DefaultLifetime}.");
+            return new (defaultLifetimeArg, value);
+        }
 
-        return new(defaultLifetimeArg, DefaultLifetime, $"Lifetime of \"{value}\" specified is invalid. Using {DefaultLifetime}.");
+        return new(defaultLifetimeArg, DefaultLifetime,
+            $"Cannot interpret \"{defaultLifetimeArg.Expression.ToString()}\" as a default lifetime value in this version of the source generator. Please use \"Lifetime.<value>\".");
     }
 
     private bool IncludeTestFakes()

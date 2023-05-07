@@ -95,6 +95,25 @@ public enum FeatureFlags
     }
     
     [Test]
+    public async Task JustDefaultNonLiteralTest()
+    {
+        const string source = @"
+using Stravaig.FeatureFlags;
+
+namespace My.Test.Namespace;
+
+[StronglyTypedFeatureFlags(DefaultLifetime = Nonsense)]
+public enum FeatureFlags
+{
+    FeatureOne,
+    FeatureTwo,
+}
+";
+
+        await VerifyGeneratedSource(source);
+    }
+    
+    [Test]
     public async Task SpecificNonsenseLifetimeTest()
     {
         const string source = @"
