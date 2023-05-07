@@ -1,0 +1,13 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>The state of the Alpha feature flag is "@Model.Alpha". The alpha flag is a singleton and won't change even if the underlying value in the configuration is updated.</p>
+    <p>The state of the Beta feature flag is @Model.Beta. The beta flag is scoped, so new scopes will reflect the new value, but existing scopes will retain the old value until the scope is ended.</p>
+    
+    <p>This page was rendered on @Model.CurrentTime. The time format is dependent on the Beta feature flag.</p>
+</div>
