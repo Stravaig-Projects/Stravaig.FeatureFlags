@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Stravaig.FeatureFlags" Version="23.5.5-example-110456" />
+      <PackageReference Include="Stravaig.FeatureFlags" Version="23.5.7-example-130347" />
     </ItemGroup>
 
 </Project>
