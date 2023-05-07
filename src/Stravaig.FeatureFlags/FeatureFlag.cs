@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,10 +17,12 @@ public abstract class FeatureFlag : IStronglyTypedFeatureFlag
     private bool? _isEnabled = null;
     private readonly IFeatureManager _manager;
     private readonly string _name;
-
+    
     protected FeatureFlag(IFeatureManager manager, string name)
     {
-        _manager = manager;
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(name));
+        _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         _name = name;
     }
 

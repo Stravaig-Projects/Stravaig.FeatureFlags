@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -8,6 +10,14 @@ namespace Stravaig.FeatureFlags.SourceGenerator;
 
 public class SourceWriter
 {
+    private const string TransientLifetime = "Transient";
+    private const string ScopedLifetime = "Scoped";
+    private const string SingletonLifetime = "Singleton";
+    private const string DefaultLifetime = ScopedLifetime;
+    private static readonly ImmutableArray<string> ValidLifetimes =
+        ImmutableArray.Create<string>(ScopedLifetime, TransientLifetime, SingletonLifetime);
+    
+    
     private readonly EnumDeclarationSyntax _enumDeclaration;
     private readonly SemanticModel _semanticModel;
     
@@ -21,7 +31,7 @@ public class SourceWriter
     private SyntaxKind? GetNamespaceKind() =>
         GetNamespaceOfEnum()?.Kind();
 
-    private string GetDefaultLifetime()
+    private StringResult GetDefaultLifetime()
     {
         var attr = _enumDeclaration.AttributeLists
             .SelectMany(al => al.Attributes)
@@ -30,9 +40,13 @@ public class SourceWriter
         var defaultLifetimeArg =
             attr.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "DefaultLifetime");
         if (defaultLifetimeArg == null)
-            return "Scoped";
+            return new(_enumDeclaration, DefaultLifetime);
 
-        return ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
+        var value = ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
+        if (ValidLifetimes.Contains(value, StringComparer.Ordinal))
+            return new(defaultLifetimeArg, value);
+
+        return new(defaultLifetimeArg, DefaultLifetime, $"Lifetime of \"{value}\" specified is invalid. Using {DefaultLifetime}.");
     }
 
     private bool IncludeTestFakes()
@@ -83,13 +97,9 @@ public class SourceWriter
         StringBuilder fileContent = new StringBuilder();
         AddFileHeader(fileContent);
         string indent = AddNamespaceStart(fileContent, namespaceName);
-
         AddStronglyTypedFeatureFlagClasses(fileContent, indent);
-
         AddBuilderClass(fileContent, indent);
-
         AddNamespaceEnd(fileContent, namespaceName);
-
         WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent);
 
         bool includeFakes = IncludeTestFakes();
@@ -133,7 +143,7 @@ public class SourceWriter
         if (enumMembers.Count == 0)
             return;
 
-        string defaultLifetime = GetDefaultLifetime();
+        var defaultLifetime = GetDefaultLifetime();
         string enumName = _enumDeclaration.Identifier.Text;
         fileContent.AppendLine(@$"
 {indent}public static class {enumName}ServiceExtensions
@@ -143,8 +153,10 @@ public class SourceWriter
         foreach (var item in enumMembers)
         {
             var lifetime = GetFeatureFlagLifetime(item, defaultLifetime);
+            if (lifetime.HasError)
+                fileContent.AppendLine($"#error {lifetime.ErrorWithPosition}");
             string flagName = item.Identifier.Text;
-            fileContent.AppendLine($"{indent}        builder.Services.Add{lifetime}<I{flagName}FeatureFlag, {flagName}FeatureFlag>();");
+            fileContent.AppendLine($"{indent}        builder.Services.Add{lifetime.Value}<I{flagName}FeatureFlag, {flagName}FeatureFlag>();");
         }
 
         fileContent.AppendLine($@"{indent}        return builder;
@@ -152,7 +164,7 @@ public class SourceWriter
 {indent}}}");
     }
 
-    private string GetFeatureFlagLifetime(EnumMemberDeclarationSyntax enumMember, string defaultLifetime)
+    private StringResult GetFeatureFlagLifetime(EnumMemberDeclarationSyntax enumMember, StringResult defaultLifetime)
     {
         var lifetimeAttribute = enumMember.AttributeLists
             .SelectMany(al => al.Attributes)
@@ -164,8 +176,17 @@ public class SourceWriter
         var arg = lifetimeAttribute.ArgumentList?.Arguments.FirstOrDefault();
         if (arg == null)
             return defaultLifetime;
-        
-        return ((MemberAccessExpressionSyntax)arg.Expression).Name.ToString();
+
+        if (arg.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
+        {
+            string value = ((MemberAccessExpressionSyntax)arg.Expression).Name.ToString();
+            if (!ValidLifetimes.Contains(value, StringComparer.Ordinal))
+                return new(arg, DefaultLifetime, $"Lifetime of \"{value}\" specified is invalid. Using {DefaultLifetime}.");
+            return new (arg, value);
+        }
+
+        return new(arg, DefaultLifetime,
+            $"Cannot interpret \"{arg.Expression.ToString()}\" in this version of the source generator. Please use \"Lifetime.<value>\".");
     }
 
     private void AddStronglyTypedFeatureFlagClasses(StringBuilder fileContent, string indent)

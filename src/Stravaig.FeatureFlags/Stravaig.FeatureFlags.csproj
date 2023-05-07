@@ -28,7 +28,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/$(GITHUB_REPOSITORY)</RepositoryUrl>
 		<PackageIcon>stravaig-icon.png</PackageIcon>
-		<PackageTags>Configuration SqlServer</PackageTags>
+		<PackageTags>FeatureFlags</PackageTags>
 		<Description>
       Strongly typed feature flags are based on the example of using a feature
       flag from Mark Seemans' book "Code that Fits in your Head", but wrapping
@@ -52,15 +52,22 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj" PrivateAssets="All" OutputItemType="Analyser" />
+  </ItemGroup>
+  
+  <ItemGroup>
 		<PackageReference Include="Microsoft.FeatureManagement" Version="2.5.1" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj" PrivateAssets="All" />
-	</ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+  </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+  </ItemGroup>
 
   <Target Name="_AddAnalyzersToOutput">
     <ItemGroup>

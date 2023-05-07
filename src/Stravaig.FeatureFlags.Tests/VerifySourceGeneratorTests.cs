@@ -27,6 +27,22 @@ public class VerifySourceGeneratorTests
         //Debug.Assert(outputCompilation.SyntaxTrees.Count() == 2); // we have two syntax trees, the original 'user' provided one, and the one added by the generator
         //Debug.Assert(outputCompilation.GetDiagnostics().IsEmpty); // verify the compilation with the added source has no diagnostics
 
+        if (!diagnostics.IsEmpty)
+        {
+            var diagnosticMessages = string.Join(
+                Environment.NewLine,
+                diagnostics.Select(
+                    d => d.ToString() +
+                         Environment.NewLine +
+                         string.Join(
+                             Environment.NewLine,
+                             d.Properties.Select(p => $" >> {p.Key} : {p.Value}") +
+                             Environment.NewLine)));
+            
+            Assert.Fail(diagnosticMessages);
+            return;
+        }
+        
         // Or we can look at the results directly:
         GeneratorDriverRunResult runResult = driver.GetRunResult();
 
