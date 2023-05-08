@@ -365,34 +365,3 @@ $lastCommitMsg = [DateTime]::ParseExact($lastCommit.Time, "yyyy-MM-dd HH:mm:ss z
 ":date: Until $lastCommitMsg." | Out-File $OutputFile -Append -Encoding utf8
 "" | Out-File $OutputFile -Append -Encoding utf8
 
-if (-Not $HideSummaryAwards)
-{
-    $topCommitters = ($contributors | Sort-Object CommitCount -Descending);
-    $topCommitter = $topCommitters[0];
-    $name = $topCommitter.PrimaryName;
-    $commitCount = $topCommitter.CommitCount;
-    $percentage = $topCommitter.CommitCount / $totalCommits;
-
-    ":1st_place_medal: Gold medal to $name with $commitCount commits which represents "+("{0:P2}" -f $percentage)+" of all commits." | Out-File $OutputFile -Append -Encoding utf8
-    "" | Out-File $OutputFile -Append -Encoding utf8
-
-    $topCommitter = $topCommitters[1];
-    if ($null -ne $topCommitter)
-    {
-        $name = $topCommitter.PrimaryName;
-        $commitCount = $topCommitter.CommitCount;
-        $percentage = $topCommitter.CommitCount / $totalCommits;
-        ":2nd_place_medal: Silver medal to $name with $commitCount commits which represents "+("{0:P2}" -f $percentage)+" of all commits." | Out-File $OutputFile -Append -Encoding utf8
-        "" | Out-File $OutputFile -Append -Encoding utf8
-    }
-
-    $topCommitter = $topCommitters[2];
-    if ($null -ne $topCommitter)
-    {
-        $name = $topCommitter.PrimaryName;
-        $commitCount = $topCommitter.CommitCount;
-        $percentage = $topCommitter.CommitCount / $totalCommits;
-        ":3rd_place_medal: Bronze medal to $name with $commitCount commits which represents "+("{0:P2}" -f $percentage)+" of all commits." | Out-File $OutputFile -Append -Encoding utf8
-        "" | Out-File $OutputFile -Append -Encoding utf8
-    }
-}
