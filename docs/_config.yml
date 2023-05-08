@@ -2,9 +2,9 @@ remote_theme: pages-themes/hacker@v0.2.0
 plugins:
   - jekyll-remote-theme 
 
-title: Stravaig.Extensions.Core
-description: A set of small extensions to make life a little easier.
+title: Stravaig.FeatureFlags
+description: A strongly typed extension to Microsoft.FeatureManagement
 show_downloads: false
 
 nuget:
-  url: https://www.nuget.org/packages/Stravaig.Extensions.Core
+  url: https://www.nuget.org/packages/Stravaig.FeatureFlags
