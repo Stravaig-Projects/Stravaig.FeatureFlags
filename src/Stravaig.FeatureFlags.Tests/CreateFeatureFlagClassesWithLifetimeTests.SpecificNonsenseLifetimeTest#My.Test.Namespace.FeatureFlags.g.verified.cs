@@ -105,7 +105,7 @@ public sealed class ThetaFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, ITheta
 
 public static class FeatureFlagsServiceExtensions
 {
-    public static IFeatureManagementBuilder AddStronglyTypedFeatureFlags(this IFeatureManagementBuilder builder)
+    public static IFeatureManagementBuilder AddFeatureFlags(this IFeatureManagementBuilder builder)
     {
         builder.Services.AddSingleton<IAlphaFeatureFlag, AlphaFeatureFlag>();
 #error : (10,14)-(10,30) caused defective source generation. Lifetime of "Garbage" specified is invalid. Using Scoped.

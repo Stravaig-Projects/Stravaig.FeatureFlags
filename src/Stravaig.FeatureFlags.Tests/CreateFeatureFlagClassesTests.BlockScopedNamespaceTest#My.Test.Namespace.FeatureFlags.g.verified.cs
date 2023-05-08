@@ -34,7 +34,7 @@ namespace My.Test.Namespace
 
     public static class FeatureFlagsServiceExtensions
     {
-        public static IFeatureManagementBuilder AddStronglyTypedFeatureFlags(this IFeatureManagementBuilder builder)
+        public static IFeatureManagementBuilder AddFeatureFlags(this IFeatureManagementBuilder builder)
         {
             builder.Services.AddScoped<IFeatureOneFeatureFlag, FeatureOneFeatureFlag>();
             builder.Services.AddScoped<IFeatureTwoFeatureFlag, FeatureTwoFeatureFlag>();

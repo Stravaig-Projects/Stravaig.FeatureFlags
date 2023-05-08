@@ -33,7 +33,7 @@ public sealed class FeatureTwoFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, I
 
 public static class FeatureFlagsServiceExtensions
 {
-    public static IFeatureManagementBuilder AddStronglyTypedFeatureFlags(this IFeatureManagementBuilder builder)
+    public static IFeatureManagementBuilder AddFeatureFlags(this IFeatureManagementBuilder builder)
     {
 #error : (5,27)-(5,53) caused defective source generation. Cannot interpret "Nonsense" as a default lifetime value in this version of the source generator. Please use "Lifetime.<value>".
         builder.Services.AddScoped<IFeatureOneFeatureFlag, FeatureOneFeatureFlag>();

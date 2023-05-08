@@ -118,7 +118,7 @@ public class SourceWriter
         fileContent.AppendLine(@$"
 {indent}public static class {enumName}ServiceExtensions
 {indent}{{
-{indent}    public static IFeatureManagementBuilder AddStronglyTyped{enumName}(this IFeatureManagementBuilder builder)
+{indent}    public static IFeatureManagementBuilder Add{enumName}(this IFeatureManagementBuilder builder)
 {indent}    {{");
         foreach (var item in enumMembers)
         {

@@ -33,7 +33,7 @@ public sealed class FeatureTwoFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, I
 
 public static class FeatureFlagsServiceExtensions
 {
-    public static IFeatureManagementBuilder AddStronglyTypedFeatureFlags(this IFeatureManagementBuilder builder)
+    public static IFeatureManagementBuilder AddFeatureFlags(this IFeatureManagementBuilder builder)
     {
         builder.Services.AddTransient<IFeatureOneFeatureFlag, FeatureOneFeatureFlag>();
         builder.Services.AddTransient<IFeatureTwoFeatureFlag, FeatureTwoFeatureFlag>();

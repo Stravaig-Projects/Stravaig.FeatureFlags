@@ -57,7 +57,7 @@ public sealed class TheDefaultFeatureFeatureFlag : Stravaig.FeatureFlags.Feature
 
 public static class FeatureFlagsServiceExtensions
 {
-    public static IFeatureManagementBuilder AddStronglyTypedFeatureFlags(this IFeatureManagementBuilder builder)
+    public static IFeatureManagementBuilder AddFeatureFlags(this IFeatureManagementBuilder builder)
     {
         builder.Services.AddTransient<ITheTransientFeatureFeatureFlag, TheTransientFeatureFeatureFlag>();
         builder.Services.AddScoped<ITheScopedFeatureFeatureFlag, TheScopedFeatureFeatureFlag>();
