@@ -2,7 +2,7 @@
 
 The idea for this package came from Mark Seemann's book "Code That Fits in Your Head", chapter 10 section 1. 
 
-[Feature Flags & Inception](inception.md)
+More info: [Feature Flags & Inception...](inception.md)
 
 ## Project details
 
