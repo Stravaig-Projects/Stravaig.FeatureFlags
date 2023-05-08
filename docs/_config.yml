@@ -3,7 +3,7 @@ plugins:
   - jekyll-remote-theme 
 
 title: Stravaig.FeatureFlags
-description: A strongly typed extension to Microsoft.FeatureManagement
+description: An extension to Microsoft.FeatureManagement based on Code That Fits in Your Head
 show_downloads: false
 
 nuget:
