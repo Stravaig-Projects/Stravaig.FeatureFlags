@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing" Version="1.1.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.4.2" />
@@ -22,12 +23,15 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Shouldly" Version="4.2.1" />
     <PackageReference Include="Verify.NUnit" Version="19.14.1" />
     <PackageReference Include="Verify.SourceGenerators" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj" />
+    <ProjectReference Include="..\Stravaig.FeatureFlags.SourceGenerator\Stravaig.FeatureFlags.SourceGenerator.csproj">
+      <OutputItemType>Analyzer</OutputItemType>
+    </ProjectReference>
     <ProjectReference Include="..\Stravaig.FeatureFlags\Stravaig.FeatureFlags.csproj" />
   </ItemGroup>
 
