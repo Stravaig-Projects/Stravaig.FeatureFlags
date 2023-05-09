@@ -1,13 +1,15 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Shouldly;
 using Stravaig.FeatureFlags.SourceGenerator;
 
 namespace Stravaig.FeatureFlags.Tests;
 
 public class VerifySourceGeneratorTests
 {
-    protected async Task VerifyGeneratedSource(string source)
+    protected async Task VerifyGeneratedSource(string source, [CallerFilePath]string sourceFile = "")
     {
         Compilation inputCompilation = CreateCompilation(source);
 
@@ -57,7 +59,8 @@ public class VerifySourceGeneratorTests
         //Debug.Assert(generatorResult.GeneratedSources.Length == 1);
         //Debug.Assert(generatorResult.Exception is null);
 
-        await Verifier.Verify(runResult);
+        // ReSharper disable once ExplicitCallerInfoArgument
+        await Verifier.Verify(runResult, sourceFile: sourceFile);
     }
     private static Compilation CreateCompilation(string source)
         => CSharpCompilation.Create("compilation",
