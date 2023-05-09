@@ -34,7 +34,6 @@ public class SourceWriter
         AddFileHeader(fileContent);
         string indent = AddNamespaceStart(fileContent, namespaceName);
         AddStronglyTypedFeatureFlagClasses(fileContent, indent);
-        AddBuilderClass(fileContent, indent);
         AddNamespaceEnd(fileContent, namespaceName);
         WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent);
 
@@ -105,33 +104,6 @@ public class SourceWriter
 {indent}}}
 ");
         }
-    }
-    
-    private void AddBuilderClass(StringBuilder fileContent, string indent)
-    {
-        var enumMembers = _enumDeclaration.Members;
-        if (enumMembers.Count == 0)
-            return;
-
-        var defaultLifetime = GetDefaultLifetime();
-        string enumName = _enumDeclaration.Identifier.Text;
-        fileContent.AppendLine(@$"
-{indent}public static class {enumName}ServiceExtensions
-{indent}{{
-{indent}    public static IFeatureManagementBuilder Add{enumName}(this IFeatureManagementBuilder builder)
-{indent}    {{");
-        foreach (var item in enumMembers)
-        {
-            var lifetime = GetFeatureFlagLifetime(item, defaultLifetime);
-            if (lifetime.HasError)
-                fileContent.AppendLine($"#error {lifetime.ErrorWithPosition}");
-            string flagName = item.Identifier.Text;
-            fileContent.AppendLine($"{indent}        builder.Services.Add{lifetime.Value}<I{flagName}FeatureFlag, {flagName}FeatureFlag>();");
-        }
-
-        fileContent.AppendLine($@"{indent}        return builder;
-{indent}    }}
-{indent}}}");
     }
     
     private void AddNamespaceEnd(StringBuilder fileContent, string? namespaceName)

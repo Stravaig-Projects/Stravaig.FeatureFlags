@@ -30,13 +30,3 @@ public sealed class FeatureTwoFeatureFlag : Stravaig.FeatureFlags.FeatureFlag, I
     }
 }
 
-
-public static class FeatureFlagsServiceExtensions
-{
-    public static IFeatureManagementBuilder AddFeatureFlags(this IFeatureManagementBuilder builder)
-    {
-        builder.Services.AddScoped<IFeatureOneFeatureFlag, FeatureOneFeatureFlag>();
-        builder.Services.AddScoped<IFeatureTwoFeatureFlag, FeatureTwoFeatureFlag>();
-        return builder;
-    }
-}
