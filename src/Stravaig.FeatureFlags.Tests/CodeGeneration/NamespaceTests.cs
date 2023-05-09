@@ -1,4 +1,4 @@
-namespace Stravaig.FeatureFlags.Tests;
+namespace Stravaig.FeatureFlags.Tests.CodeGeneration;
 
 [TestFixture]
 public class NamespaceTests : VerifySourceGeneratorTests
