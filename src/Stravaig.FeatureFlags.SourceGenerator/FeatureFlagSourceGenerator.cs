@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Microsoft.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,7 +14,7 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var valueProvider = context.SyntaxProvider
-            .CreateSyntaxProvider(IsFeatureFlagEnum, CreateSourceWriter);
+            .CreateSyntaxProvider(IsLikelyFeatureFlagEnum, CreateSourceWriter);
         
         context.RegisterSourceOutput(valueProvider, GenerateCode);
     }
@@ -23,7 +24,7 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
     private static SourceWriter CreateSourceWriter(GeneratorSyntaxContext ctx, CancellationToken _)
         => new ((EnumDeclarationSyntax)ctx.Node);
     
-    private static bool IsFeatureFlagEnum(
+    private static bool IsLikelyFeatureFlagEnum(
         SyntaxNode syntaxNode,
         CancellationToken cancellationToken)
     {
@@ -32,12 +33,13 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
 
         var enumDeclaration = (EnumDeclarationSyntax)syntaxNode;
 
-        var attributes = enumDeclaration.AttributeLists
-            .SelectMany(al => al.Attributes).ToImmutableArray();
-        if (attributes.Length == 0)
+        var attrLists = enumDeclaration.AttributeLists;
+        if (!attrLists.Any())
             return false;
-        
-        return attributes.Any(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
+
+        return attrLists
+            .SelectMany(al => al.Attributes)
+            .Any(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
     }
 
     private static string? ExtractName(NameSyntax? name)
