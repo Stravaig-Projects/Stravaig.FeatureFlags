@@ -1,56 +1,29 @@
-using System;
-using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Stravaig.FeatureFlags.SourceGenerator;
 
 public class SourceWriter
 {
-    private const string TransientLifetime = "Transient";
-    private const string ScopedLifetime = "Scoped";
-    private const string SingletonLifetime = "Singleton";
-    private const string DefaultLifetime = ScopedLifetime;
-    private static readonly ImmutableArray<string> ValidLifetimes =
-        ImmutableArray.Create<string>(ScopedLifetime, TransientLifetime, SingletonLifetime);
-    
-    
-    private readonly EnumDeclarationSyntax _enumDeclaration;
-
-    public SourceWriter(EnumDeclarationSyntax enumDeclaration)
+    internal void GenerateCode(SourceProductionContext productionContext, FeatureFlagsModel model)
     {
-        _enumDeclaration = enumDeclaration;
-    }
-    
-    public void GenerateCode(SourceProductionContext productionContext)
-    {
-        var enumNamespace = GetNamespaceOfEnum();
-        var namespaceName = enumNamespace?.Name.ToString();
-        
         StringBuilder fileContent = new StringBuilder();
         AddFileHeader(fileContent);
-        string indent = AddNamespaceStart(fileContent, namespaceName);
-        AddStronglyTypedFeatureFlagClasses(fileContent, indent);
-        AddNamespaceEnd(fileContent, namespaceName);
-        WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent);
+        AddNamespaceStart(fileContent, model.NamespaceName);
+        AddStronglyTypedFeatureFlagClasses(fileContent, model);
+        AddNamespaceEnd(fileContent, model.NamespaceName);
+        WriteFeatureFlagClassesFile(productionContext, model, fileContent);
 
-        bool includeFakes = IncludeTestFakes();
-        if (!includeFakes)
+        if (!model.IncludeTestFakes)
             return;
 
         fileContent.Clear();
         AddFileHeader(fileContent, isTesting: true);
-        indent = AddNamespaceStart(fileContent, namespaceName, isTesting: true);
-        AddTestingClasses(fileContent, indent);
-        AddNamespaceEnd(fileContent, namespaceName);
-        WriteFeatureFlagClassesFile(productionContext, namespaceName, fileContent, isTesting: true);
+        AddNamespaceStart(fileContent, model.NamespaceName, isTesting: true);
+        AddTestingClasses(fileContent, model);
+        AddNamespaceEnd(fileContent, model.NamespaceName);
+        WriteFeatureFlagClassesFile(productionContext, model, fileContent, isTesting: true);
     }
-    
-    private BaseNamespaceDeclarationSyntax? GetNamespaceOfEnum() =>
-        _enumDeclaration.Ancestors().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();
     
     private void AddFileHeader(StringBuilder fileContent, bool isTesting = false)
     {
@@ -59,49 +32,38 @@ public class SourceWriter
         if (isTesting == false)
             fileContent.AppendLine("using Microsoft.Extensions.DependencyInjection;");
         fileContent.AppendLine("using Microsoft.FeatureManagement;");
-        fileContent.AppendLine("using Stravaig.FeatureFlags;");
+        fileContent.AppendLine("using Stravaig.FeatureFlagNames;");
         fileContent.AppendLine();
     }
     
-    private string AddNamespaceStart(StringBuilder fileContent, string? namespaceName, bool isTesting = false)
+    private void AddNamespaceStart(StringBuilder fileContent, string? namespaceName, bool isTesting = false)
     {
         if (string.IsNullOrWhiteSpace(namespaceName))
-            return string.Empty;
+            return;
 
         fileContent.Append($"namespace {namespaceName}");
         if (isTesting)
             fileContent.Append(".Testing");
 
-        var kind = GetNamespaceKind();
-        if (kind == SyntaxKind.FileScopedNamespaceDeclaration)
-        {
-            fileContent.AppendLine(";");
-            return string.Empty;
-        }
-
         fileContent.AppendLine();
         fileContent.AppendLine("{");
-        return "    "; // indent for the rest of the code.
     }
     
-    private void AddStronglyTypedFeatureFlagClasses(StringBuilder fileContent, string indent)
+    private void AddStronglyTypedFeatureFlagClasses(StringBuilder fileContent, FeatureFlagsModel model)
     {
-        var enumMembers = _enumDeclaration.Members;
-
-        foreach (var item in enumMembers)
+        foreach (var name in model.FeatureFlagNames)
         {
-            string name = item.Identifier.Text;
-            fileContent.AppendLine(@$"{indent}public interface I{name}FeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
-{indent}{{
-{indent}}}
+            fileContent.AppendLine(@$"    public interface I{name}FeatureFlag : Stravaig.FeatureFlagNames.IStronglyTypedFeatureFlag
+    {{
+    }}
 
-{indent}public sealed class {name}FeatureFlag : Stravaig.FeatureFlags.FeatureFlag, I{name}FeatureFlag
-{indent}{{
-{indent}    public {name}FeatureFlag(IFeatureManager featureManager)
-{indent}        : base(featureManager, ""{name}"")
-{indent}    {{
-{indent}    }}
-{indent}}}
+    public sealed class {name}FeatureFlag : Stravaig.FeatureFlagNames.FeatureFlag, I{name}FeatureFlag
+    {{
+        public {name}FeatureFlag(IFeatureManager featureManager)
+            : base(featureManager, ""{name}"")
+        {{
+        }}
+    }}
 ");
         }
     }
@@ -110,130 +72,37 @@ public class SourceWriter
     {
         if (string.IsNullOrWhiteSpace(namespaceName))
             return;
-
-        var kind = GetNamespaceKind();
-        if (kind == SyntaxKind.NamespaceDeclaration)
-            fileContent.AppendLine("}");
+        fileContent.AppendLine("}");
     }
     
     private void WriteFeatureFlagClassesFile(
         SourceProductionContext productionContext,
-        string? namespaceName,
+        FeatureFlagsModel model,
         StringBuilder fileContent,
         bool isTesting = false)
     {
         var testing = isTesting ? ".Testing" : string.Empty;
-        var enumName = _enumDeclaration.Identifier.Text;
-        var fileName = $"{namespaceName ?? "global."}{testing}.{enumName}.g.cs";
+        var enumName = model.EnumName;
+        var fileName = $"{model.NamespaceName ?? "[global]"}{testing}.{enumName}.g.cs";
         var source = fileContent.ToString();
         productionContext.AddSource(fileName, source);
     }
     
-    private void AddTestingClasses(StringBuilder fileContent, string indent)
+    private void AddTestingClasses(StringBuilder fileContent, FeatureFlagsModel model)
     {
-        var enumMembers = _enumDeclaration.Members;
-        if (enumMembers.Count == 0)
-            return;
-
-        foreach (var item in enumMembers)
+        foreach (var flagName in model.FeatureFlagNames)
         {
-            string flagName = item.Identifier.Text;
             fileContent.AppendLine(@$"
-{indent}public sealed class Fake{flagName}FeatureFlag : Stravaig.FeatureFlags.Testing.FakeFeatureFlag, I{flagName}FeatureFlag
-{indent}{{
-{indent}    public static readonly Fake{flagName}FeatureFlag Enabled = new Fake{flagName}FeatureFlag(true);
-{indent}    public static readonly Fake{flagName}FeatureFlag Disabled = new Fake{flagName}FeatureFlag(false);
+    public sealed class Fake{flagName}FeatureFlag : Stravaig.FeatureFlagNames.Testing.FakeFeatureFlag, I{flagName}FeatureFlag
+    {{
+        public static readonly Fake{flagName}FeatureFlag Enabled = new Fake{flagName}FeatureFlag(true);
+        public static readonly Fake{flagName}FeatureFlag Disabled = new Fake{flagName}FeatureFlag(false);
 
-{indent}    public Fake{flagName}FeatureFlag(bool state) : base(state)
-{indent}    {{
-{indent}    }}
-{indent}}}
+        public Fake{flagName}FeatureFlag(bool state) : base(state)
+        {{
+        }}
+    }}
 ");
         }
-    }
-    
-    private SyntaxKind? GetNamespaceKind() =>
-        GetNamespaceOfEnum()?.Kind();
-
-    private StringResult GetDefaultLifetime()
-    {
-        var attr = _enumDeclaration.AttributeLists
-            .SelectMany(al => al.Attributes)
-            .First(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
-
-        var defaultLifetimeArg =
-            attr.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "DefaultLifetime");
-        if (defaultLifetimeArg == null)
-            return new(_enumDeclaration, DefaultLifetime);
-
-        if (defaultLifetimeArg.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
-        {
-            string value = ((MemberAccessExpressionSyntax)defaultLifetimeArg.Expression).Name.ToString();
-            if (!ValidLifetimes.Contains(value, StringComparer.Ordinal))
-                return new(defaultLifetimeArg, DefaultLifetime, $"Lifetime of \"{value}\" specified is invalid. Using {DefaultLifetime}.");
-            return new (defaultLifetimeArg, value);
-        }
-
-        return new(defaultLifetimeArg, DefaultLifetime,
-            $"Cannot interpret \"{defaultLifetimeArg.Expression.ToString()}\" as a default lifetime value in this version of the source generator. Please use \"Lifetime.<value>\".");
-    }
-
-    private bool IncludeTestFakes()
-    {
-        var attr = _enumDeclaration.AttributeLists
-            .SelectMany(al => al.Attributes)
-            .First(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
-
-        var testFakesArg =
-            attr.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name.ToString() == "IncludeTestFakes");
-        if (testFakesArg == null)
-            return false;
-
-
-        switch (testFakesArg.Expression.Kind())
-        {
-            case SyntaxKind.TrueLiteralExpression:
-                return true;
-            case SyntaxKind.FalseLiteralExpression:
-                return false;
-            default:
-                // TODO: process other possibilities.
-                return false;
-        }
-    }
-
-    private static string? ExtractName(NameSyntax? name)
-    {
-        return name switch
-        {
-            SimpleNameSyntax ins => ins.Identifier.Text,
-            QualifiedNameSyntax qns => qns.Right.Identifier.Text,
-            _ => null
-        };
-    }
-
-    private StringResult GetFeatureFlagLifetime(EnumMemberDeclarationSyntax enumMember, StringResult defaultLifetime)
-    {
-        var lifetimeAttribute = enumMember.AttributeLists
-            .SelectMany(al => al.Attributes)
-            .FirstOrDefault(a => a.Name.ToString() == "Lifetime");
-
-        if (lifetimeAttribute == null)
-            return defaultLifetime;
-
-        var arg = lifetimeAttribute.ArgumentList?.Arguments.FirstOrDefault();
-        if (arg == null)
-            return defaultLifetime;
-
-        if (arg.Expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
-        {
-            string value = ((MemberAccessExpressionSyntax)arg.Expression).Name.ToString();
-            if (!ValidLifetimes.Contains(value, StringComparer.Ordinal))
-                return new(arg, DefaultLifetime, $"Lifetime of \"{value}\" specified is invalid. Using {DefaultLifetime}.");
-            return new (arg, value);
-        }
-
-        return new(arg, DefaultLifetime,
-            $"Cannot interpret \"{arg.Expression.ToString()}\" in this version of the source generator. Please use \"Lifetime.<value>\".");
     }
 }

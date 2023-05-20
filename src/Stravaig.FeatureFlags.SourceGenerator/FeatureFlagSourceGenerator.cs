@@ -14,15 +14,18 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var valueProvider = context.SyntaxProvider
-            .CreateSyntaxProvider(IsLikelyFeatureFlagEnum, CreateSourceWriter);
+            .CreateSyntaxProvider(IsLikelyFeatureFlagEnum, CreateModel);
         
         context.RegisterSourceOutput(valueProvider, GenerateCode);
     }
 
-    private static void GenerateCode(SourceProductionContext ctx, SourceWriter writer) => writer.GenerateCode(ctx);    
+    private static void GenerateCode(SourceProductionContext ctx, FeatureFlagsModel? model)
+    {
+        if (model != null)
+            new SourceWriter().GenerateCode(ctx, model);
+    }
 
-    private static SourceWriter CreateSourceWriter(GeneratorSyntaxContext ctx, CancellationToken _)
-        => new ((EnumDeclarationSyntax)ctx.Node);
+    private static FeatureFlagsModel? CreateModel(GeneratorSyntaxContext ctx, CancellationToken ct) => FeatureFlagsModel.Create(ctx, ct);
     
     private static bool IsLikelyFeatureFlagEnum(
         SyntaxNode syntaxNode,
@@ -33,13 +36,20 @@ public class FeatureFlagSourceGenerator : IIncrementalGenerator
 
         var enumDeclaration = (EnumDeclarationSyntax)syntaxNode;
 
-        var attrLists = enumDeclaration.AttributeLists;
-        if (!attrLists.Any())
-            return false;
+        var attributes = enumDeclaration.AttributeLists 
+            .SelectMany(al => al.Attributes).ToImmutableArray(); 
+        if (attributes.Length == 0) 
+            return false; 
+         
+        return attributes.Any(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags"); 
 
-        return attrLists
-            .SelectMany(al => al.Attributes)
-            .Any(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
+        // var attrLists = enumDeclaration.AttributeLists;
+        // if (!attrLists.Any())
+        //     return false;
+        //
+        // return attrLists
+        //     .SelectMany(al => al.Attributes)
+        //     .Any(a => ExtractName(a.Name) is "StronglyTypedFeatureFlagsAttribute" or "StronglyTypedFeatureFlags");
     }
 
     private static string? ExtractName(NameSyntax? name)
