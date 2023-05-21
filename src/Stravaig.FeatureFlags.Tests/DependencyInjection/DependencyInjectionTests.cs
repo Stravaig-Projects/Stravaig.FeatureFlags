@@ -139,7 +139,10 @@ public class DependencyInjectionTests
         var services = new ServiceCollection();
 
         services.AddFeatureManagement(configRoot)
-            .SetupStronglyTypedFeatures(opts => { opts.Add<DependencyInjectionTestsFeatureFlags>(); });
+            .SetupStronglyTypedFeatures(opts =>
+            {
+                opts.Add<DependencyInjectionTestsFeatureFlags>();
+            });
         var provider = services.BuildServiceProvider();
         return (configRoot, provider);
     }
