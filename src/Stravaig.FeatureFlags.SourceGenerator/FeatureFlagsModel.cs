@@ -10,11 +10,10 @@ namespace Stravaig.FeatureFlags.SourceGenerator;
 
 internal class FeatureFlagsModel : IEquatable<FeatureFlagsModel>
 {
-    internal string? NamespaceName { get; private init; }
-    
-    internal string EnumName { get; private init; }
-    internal ImmutableArray<string> FeatureFlagNames { get; private init; }
-    internal bool IncludeTestFakes { get; private init; }
+    internal string? NamespaceName { get; init; }
+    internal string EnumName { get; init; }
+    internal ImmutableArray<string> FeatureFlagNames { get; init; }
+    internal bool IncludeTestFakes { get; init; }
     
     
     internal static FeatureFlagsModel? Create(GeneratorSyntaxContext ctx, CancellationToken ct)
@@ -89,9 +88,10 @@ internal class FeatureFlagsModel : IEquatable<FeatureFlagsModel>
     {
         unchecked
         {
-            var hashCode = NamespaceName.GetHashCode();
+            int hashCode = NamespaceName?.GetHashCode() ?? 0;
             for (int i = 0; i < FeatureFlagNames.Length; i++)
                 hashCode = (hashCode * 397) ^ FeatureFlagNames[i].GetHashCode();
+            hashCode = (hashCode * 397) ^ EnumName.GetHashCode();
             hashCode = (hashCode * 397) ^ IncludeTestFakes.GetHashCode();
             return hashCode;
         }
