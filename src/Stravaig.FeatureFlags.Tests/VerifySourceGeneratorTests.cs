@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
@@ -62,9 +63,21 @@ public class VerifySourceGeneratorTests
         // ReSharper disable once ExplicitCallerInfoArgument
         await Verifier.Verify(runResult, sourceFile: sourceFile);
     }
+    
+    private static readonly string DotNetAssemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
+
+    private static readonly ImmutableArray<MetadataReference> References = ImmutableArray.Create<MetadataReference>(
+        // .NET assemblies are finicky and need to be loaded in a special way.
+        MetadataReference.CreateFromFile(Path.Combine(DotNetAssemblyPath, "mscorlib.dll")),
+        MetadataReference.CreateFromFile(Path.Combine(DotNetAssemblyPath, "System.dll")),
+        MetadataReference.CreateFromFile(Path.Combine(DotNetAssemblyPath, "System.Core.dll")),
+        MetadataReference.CreateFromFile(Path.Combine(DotNetAssemblyPath, "System.Private.CoreLib.dll")),
+        MetadataReference.CreateFromFile(Path.Combine(DotNetAssemblyPath, "System.Runtime.dll")),
+        MetadataReference.CreateFromFile(typeof(StronglyTypedFeatureFlagsAttribute).GetTypeInfo().Assembly.Location)
+    );
     private static Compilation CreateCompilation(string source)
         => CSharpCompilation.Create("compilation",
             new[] { CSharpSyntaxTree.ParseText(source) },
-            new[] { MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location) },
+            References,
             new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 }

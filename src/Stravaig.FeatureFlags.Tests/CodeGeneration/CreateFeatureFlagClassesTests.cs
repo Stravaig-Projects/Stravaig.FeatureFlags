@@ -7,7 +7,7 @@ public class CreateFeatureFlagClassesTests : VerifySourceGeneratorTests
     public async Task FileScopedNamespaceTest()
     {
         const string source = @"
-using Stravaig.FeatureFlagNames;
+using Stravaig.FeatureFlags;
 
 namespace My.Test.Namespace;
 
@@ -26,11 +26,31 @@ public enum FeatureFlagNames
     public async Task BlockScopedNamespaceTest()
     {
         const string source = @"
-using Stravaig.FeatureFlagNames;
+using Stravaig.FeatureFlags;
 
 namespace My.Test.Namespace
 {
     [StronglyTypedFeatureFlags]
+    public enum FeatureFlagNames
+    {
+        FeatureOne,
+        FeatureTwo,
+    }
+}
+";
+
+        await VerifyGeneratedSource(source);
+    }
+    
+    [Test]
+    public async Task FullyQualifiesAttributeTest()
+    {
+        const string source = @"
+using Stravaig.FeatureFlags;
+
+namespace My.Test.Namespace
+{
+    [Stravaig.FeatureFlags.StronglyTypedFeatureFlagsAttribute]
     public enum FeatureFlagNames
     {
         FeatureOne,

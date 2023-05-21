@@ -24,21 +24,11 @@ internal class FeatureFlagsModel : IEquatable<FeatureFlagsModel>
         if (enumSymbol == null)
             return null;
         
-        var ffAttr = ctx.SemanticModel.Compilation
-            .GetTypeByMetadataName("Stravaig.FeatureFlags.StronglyTypedFeatureFlagsAttribute");
-        if (ffAttr == null)
-            return null;
-
-        var enumAttr = enumSymbol.GetAttributes()
-            .FirstOrDefault(a => ffAttr.Equals(a.AttributeClass, SymbolEqualityComparer.Default));
+        var enumAttr = GetFeatureAttribute(ctx, enumSymbol);
         if (enumAttr == null)
             return null;
 
-        var featureFlagNames = enumSymbol.GetMembers()
-            .Select(m => m.Name)
-            .OrderBy(m => m, StringComparer.OrdinalIgnoreCase)
-            .ToImmutableArray();
-
+        var featureFlagNames = GetFeatureFlagNames(enumSymbol);
         if (featureFlagNames.Length == 0)
             return null;
         
@@ -54,6 +44,29 @@ internal class FeatureFlagsModel : IEquatable<FeatureFlagsModel>
             FeatureFlagNames = featureFlagNames,
             IncludeTestFakes = includeTestFakes,
         };
+    }
+
+    private static ImmutableArray<string> GetFeatureFlagNames(INamedTypeSymbol enumSymbol)
+    {
+        var featureFlagMembers = enumSymbol.GetMembers();
+        var featureFlagNames = featureFlagMembers
+            .OfType<IFieldSymbol>()
+            .Select(m => m.Name)
+            .OrderBy(m => m, StringComparer.OrdinalIgnoreCase)
+            .ToImmutableArray();
+        return featureFlagNames;
+    }
+
+    private static AttributeData? GetFeatureAttribute(GeneratorSyntaxContext ctx, INamedTypeSymbol enumSymbol)
+    {
+        var ffAttr = ctx.SemanticModel.Compilation
+            .GetTypeByMetadataName("Stravaig.FeatureFlags.StronglyTypedFeatureFlagsAttribute");
+        if (ffAttr == null)
+            return null;
+
+        var enumAttrs = enumSymbol.GetAttributes();
+        var enumAttr = enumAttrs.FirstOrDefault(a => ffAttr.Equals(a.AttributeClass, SymbolEqualityComparer.Default));
+        return enumAttr;
     }
 
 

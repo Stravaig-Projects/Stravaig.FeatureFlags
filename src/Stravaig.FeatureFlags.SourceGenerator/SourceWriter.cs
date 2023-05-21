@@ -32,7 +32,7 @@ public class SourceWriter
         if (isTesting == false)
             fileContent.AppendLine("using Microsoft.Extensions.DependencyInjection;");
         fileContent.AppendLine("using Microsoft.FeatureManagement;");
-        fileContent.AppendLine("using Stravaig.FeatureFlagNames;");
+        fileContent.AppendLine("using Stravaig.FeatureFlags;");
         fileContent.AppendLine();
     }
     
@@ -53,11 +53,11 @@ public class SourceWriter
     {
         foreach (var name in model.FeatureFlagNames)
         {
-            fileContent.AppendLine(@$"    public interface I{name}FeatureFlag : Stravaig.FeatureFlagNames.IStronglyTypedFeatureFlag
+            fileContent.AppendLine(@$"    public interface I{name}FeatureFlag : Stravaig.FeatureFlags.IStronglyTypedFeatureFlag
     {{
     }}
 
-    public sealed class {name}FeatureFlag : Stravaig.FeatureFlagNames.FeatureFlag, I{name}FeatureFlag
+    public sealed class {name}FeatureFlag : Stravaig.FeatureFlags.FeatureFlag, I{name}FeatureFlag
     {{
         public {name}FeatureFlag(IFeatureManager featureManager)
             : base(featureManager, ""{name}"")
@@ -93,7 +93,7 @@ public class SourceWriter
         foreach (var flagName in model.FeatureFlagNames)
         {
             fileContent.AppendLine(@$"
-    public sealed class Fake{flagName}FeatureFlag : Stravaig.FeatureFlagNames.Testing.FakeFeatureFlag, I{flagName}FeatureFlag
+    public sealed class Fake{flagName}FeatureFlag : Stravaig.FeatureFlags.Testing.FakeFeatureFlag, I{flagName}FeatureFlag
     {{
         public static readonly Fake{flagName}FeatureFlag Enabled = new Fake{flagName}FeatureFlag(true);
         public static readonly Fake{flagName}FeatureFlag Disabled = new Fake{flagName}FeatureFlag(false);
