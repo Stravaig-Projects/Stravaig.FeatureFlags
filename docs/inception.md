@@ -86,13 +86,9 @@ What if there was no faffing around getting the name out of an `enum`, or a `con
 
 Since a lot of my code already uses `IFeatureManager` I wanted to be able to continue to use that, but I also wanted the easy of a value object, and the safety of not having to faff around with strings.
 
-So, I created this package that wraps up the `IFeatureManager` in a value object like class*. It is wrapped up in a class that takes the `IFeatureManager` as a parameter in its constructor. 
+So, I created this package that wraps up the `IFeatureManager` in a value object like class[^1]. It is wrapped up in a class that takes the `IFeatureManager` as a parameter in its constructor. 
 
-<small>
-
-> \* A value objects would ordinarily be a `struct`, but that doesn't work with Microsoft's Dependency Injection framework. It doesn't consider a `struct` to be an injectable thing. Also, injecting an `IFeatureManager` into the object makes this further from a real value object as you wouldn't inject anything into a value object other than its value. The `IFeatureManager` simple allows the object to derive its value. So, in fact, I'm now using the term _Value Object_ quite wrongly! About the only thing that makes it close to a value object any more is that the value it represents is immutable, although it doesn't calculate it until you ask for it the first time. Schrödinger's value object, you might say.
-
-</small>
+[^1]: A value objects would ordinarily be a `struct`, but that doesn't work with Microsoft's Dependency Injection framework. It doesn't consider a `struct` to be an injectable thing. Also, injecting an `IFeatureManager` into the object makes this further from a real value object as you wouldn't inject anything into a value object other than its value. The `IFeatureManager` simple allows the object to derive its value. So, in fact, I'm now using the term _Value Object_ quite wrongly! About the only thing that makes it close to a value object any more is that the value it represents is immutable, although it doesn't calculate it until you ask for it the first time. Schrödinger's value object, you might say.
 
 It exposes an `IsEnabledAsync()` method, because that's what `IFeatureManager` has, but is also has a synchronous counterpart. The values they expose are not evaluated until they are called for the first time. The they always return the same value each time, so you don't get mid-way through an operation and have the value flip.
 
