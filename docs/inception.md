@@ -106,11 +106,11 @@ Code That Fits in Your head
 Heuristics for Software Engineering
 by Mark Seemann
 
-
-
 Find out more:
 * [Book Related downloads](https://www.informit.com/store/code-that-fits-in-your-head-heuristics-for-software-9780137464401)
 * [O'Reilly](https://www.oreilly.com/library/view/code-that-fits/9780137464302/)
 * [Amazon.co.uk](https://www.amazon.co.uk/Code-That-Fits-Your-Head/dp/0137464401)
 * [Amazon.com](https://www.amazon.com/Code-That-Fits-Your-Head/dp/0137464401)
 * [Reviews on Good Reads](https://www.goodreads.com/book/show/57345272-code-that-fits-in-your-head)
+
+## Footnotes
