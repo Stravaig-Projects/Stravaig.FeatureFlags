@@ -2,3 +2,14 @@
 ---
 
 @import 'jekyll-theme-hacker';
+
+small {
+    font-size: 12px;
+}
+
+small blockquote {
+    padding: 10px;
+    border: 1px dotted #666;
+    color: #aaa;
+    background: #000;
+}
