@@ -70,7 +70,7 @@ public class EmailService
     public Task SendEmailAsync(string subject, string recipient, string body)
     {
         if (!await _sendEmail.IsEnabledAsync())
-            return;
+            return; // Feature is off, do nothing.
         
         // Do stuff for sending email.
     }
