@@ -1,3 +1,8 @@
+---
+layout: default
+title: Stravaig.FeatureFlags - Inception
+---
+
 # Inception
 
 The idea for this package came from Mark Seemann's book "Code That Fits in Your Head", chapter 10 section 1. 

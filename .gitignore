@@ -11,6 +11,7 @@
 
 docs/build/
 docs/source/_build
+_site
 
 # User-specific files
 *.rsuser

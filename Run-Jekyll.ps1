@@ -1,6 +1,10 @@
+Clear-Host;
+
 $docsPath = "$PSScriptRoot/docs";
 $sitePath = "$PSScriptRoot/_site";
 
-& jekyll build --source $docsPath --destination $sitePath
+Write-Host "& jekyll build --source `"$docsPath`" --destination `"$sitePath`" --verbose;"
+& jekyll build --source "$docsPath" --destination "$sitePath" --verbose;
 
-& jekyll serve --port 4001 --open-url true
+Write-Host "& jekyll serve --source `"$docsPath`" --destination `"$sitePath`" --port 4001;"
+& jekyll serve --source "$docsPath" --destination "$sitePath" --port 4001;

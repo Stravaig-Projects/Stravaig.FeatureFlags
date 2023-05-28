@@ -7,6 +7,7 @@ for ($i = 0; $i -lt $contrib.Count; $i++) {
 
     $contrib[$i] = $line
 }
+
 Set-Content -Path "$PSScriptRoot/docs/contributors.md" -Value $contrib -Encoding UTF8 -Force
 
 # Set up the release notes docs.

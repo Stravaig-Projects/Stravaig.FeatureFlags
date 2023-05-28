@@ -1,3 +1,8 @@
+---
+layout: default
+title: Stravaig.FeatureFlags - Getting Started
+---
+
 # Getting Started
 
 To start using `Stravaig.FeatureFlags` in your solution, first add the [Stravaig.FeatureFlags Nuget package](https://www.nuget.org/packages/Stravaig.FeatureFlags) to the project where you want to set up the feature flags. This should be a fairly central location as they will likely need to be accessible from anywhere in your application. It will also have to be accessible from the project that sets up the dependency injection.
