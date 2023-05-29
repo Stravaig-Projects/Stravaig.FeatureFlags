@@ -1,6 +1,7 @@
 remote_theme: Stravaig-Projects/stravaig-theme
 plugins:
   - jekyll-remote-theme 
+  - jekyll-relative-links
 
 title: Stravaig.FeatureFlags
 description: An extension to Microsoft.FeatureManagement based on Code That Fits in Your Head
@@ -10,7 +11,7 @@ kramdown:
     syntax_highlighter_opts:
         block:
             line_numbers: true
-            
+
 github:
   repository_url: https://github.com/Stravaig-Projects/Stravaig.FeatureFlags
 

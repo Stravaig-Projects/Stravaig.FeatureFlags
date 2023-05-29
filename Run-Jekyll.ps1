@@ -1,5 +1,8 @@
 Clear-Host;
 
+./list-contributors.ps1;
+./Update-Docs.ps1;
+
 $docsPath = "$PSScriptRoot/docs";
 $sitePath = "$PSScriptRoot/_site";
 

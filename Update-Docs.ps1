@@ -8,12 +8,27 @@ for ($i = 0; $i -lt $contrib.Count; $i++) {
     $contrib[$i] = $line
 }
 
+$frontMatter = @(
+"---"
+"layout: default"
+"title: Contributors"
+"---"
+""
+);
+
+$contrib = $frontMatter + $contrib;
+
 Set-Content -Path "$PSScriptRoot/docs/contributors.md" -Value $contrib -Encoding UTF8 -Force
 
 # Set up the release notes docs.
 Copy-Item "$PSScriptRoot/release-notes/release-notes-*.md" "$PSScriptRoot/docs/release-notes/"
 
 $releaseNotesIndexFile = @(
+"---"
+"layout: default"
+"title: Release Notes"
+"---"
+""
 "# Release Notes"
 ""
 "The releases on this package most recent first."
@@ -30,6 +45,17 @@ Get-ChildItem "$PSScriptRoot/release-notes/release-notes*.md" |
         $releaseNotesIndexFile += "- **[v$version]($name) released on $releaseDate UTC**";
         $releaseNotesIndexFile += "  - [GitHub Release](https://github.com/Stravaig-Projects/<repo-name>/releases/tag/v$version)"
         $releaseNotesIndexFile += "  - [Nuget Package](https://www.nuget.org/packages/<package-name>/$version)"
+
+        $releaseNoteFile = Get-Content $_.FullName;
+        $frontMatter = @(
+            "---"
+            "layout: default"
+            "title: Release Notes v$version"
+            "---"
+            ""
+            );
+        $releaseNoteFile = $frontMatter + $releaseNoteFile;
+        Set-Content $_.FullName $releaseNoteFile -Encoding UTF8 -Force
     }
 
 Set-Content "$PSScriptRoot/docs/release-notes/index.md" $releaseNotesIndexFile -Encoding UTF8 -Force

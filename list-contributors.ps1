@@ -224,7 +224,7 @@ function Get-InitialContributors($AkaFilePath)
 $contributors = Get-InitialContributors -AkaFilePath $AkaFilePath;
 $ignoredNamesList = Get-IgnoredNamesList -IgnoredNamesPath $IgnoredNamesPath -AkaContributors $contributors
 $ignoredEmailsList = Get-IgnoredEmailsList -IgnoredEmailsPath $IgnoredEmailsPath -AkaContributors $contributors
-& git log --format="\`"%ai\`",\`"%an\`",\`"%ae\`",\`"%H\`"" > raw-contributors.csv
+& git log --format="`"%ai`",`"%an`",`"%ae`",`"%H`"" > raw-contributors.csv
 $commits = Import-Csv raw-contributors.csv -Header Time,Name,Email,Hash | Sort-Object Time;
 Remove-Item .\raw-contributors.csv
 

@@ -14,4 +14,3 @@ The idea for this package came from Mark Seemann's book "Code That Fits in Your 
 
 * [Contributors](contributors.md)
 * [Release Notes](release-notes/index.md)
-* [Analysers](analysers/index.md)
